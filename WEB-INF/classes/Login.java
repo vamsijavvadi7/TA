@@ -23,9 +23,26 @@ public class Login extends HttpServlet{
 				usertype = req.getParameter("usertype");
 
 				Statement statement = connObject.createStatement();
-				ResultSet resultSet = statement.executeQuery("SELECT * FROM users WHERE usertype='" + usertype + "' AND znumber='"+ username +"' OR email='" + username + "' AND password='"+ password +"'");
-				
-				if(resultSet.next())
+				ResultSet resultSet;
+				boolean exists = false;
+				if(usertype.equals("admin")){
+					resultSet = statement.executeQuery("SELECT * FROM admin WHERE email='" + username + "' AND password='"+ password +"'");
+					exists = true;
+				}else if(usertype.equals("committee")){
+					resultSet = statement.executeQuery("SELECT * FROM ta_committee WHERE email='" + username + "' AND password='"+ password +"'");
+					exists = true;
+				}else if(usertype.equals("instructor")){
+					resultSet = statement.executeQuery("SELECT * FROM instructor WHERE email='" + username + "' AND password='"+ password +"'");
+					exists = true;
+				}else if(usertype.equals("applicant")){
+					resultSet = statement.executeQuery("SELECT * FROM ta_applicant WHERE znumber='"+ username +"' OR email='" + username + "' AND password='"+ password +"'");
+					exists = true;
+				}else{
+					exists = false;
+					resultSet = statement.executeQuery("SELECT * FROM admin WHERE email='" + username + "' AND password='"+ password +"'");
+				}
+
+				if(exists && resultSet.next())
 				{
 					Cookie userCookie = new Cookie("TAusername", username);
 					Cookie usertypeCookie = new Cookie("TAusertype", usertype);
