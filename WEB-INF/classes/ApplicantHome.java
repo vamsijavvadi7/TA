@@ -10,7 +10,7 @@ public class ApplicantHome extends HttpServlet{
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException { 
 	    try {
 		    Class.forName("com.mysql.jdbc.Driver");
-		    Connection connObject = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/ta", "root", "root");
+		    Connection connObject = DriverManager.getConnection("jdbc:mysql://10.0.0.224:3306/ta", "ta", "root");
 		    PrintWriter printWriter = res.getWriter();
             Cookie[] cookies = req.getCookies();
             if (connObject != null) {
@@ -27,7 +27,7 @@ public class ApplicantHome extends HttpServlet{
                 }
 
 			    Statement statement = connObject.createStatement();
-			    ResultSet userResultSet = statement.executeQuery("SELECT * FROM users WHERE usertype='" + usertype + "' AND znumber='"+ username +"' OR email='" + username + "'");
+			    ResultSet userResultSet = statement.executeQuery("SELECT * FROM ta_applicant WHERE znumber='"+ username +"' OR email='" + username + "'");
                 userResultSet.next();
                 req.setAttribute("firstname", userResultSet.getString("firstname"));
                 req.setAttribute("lastname", userResultSet.getString("lastname"));
