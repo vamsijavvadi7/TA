@@ -12,7 +12,7 @@ public class ProfileUpdate extends HttpServlet{
 	  try 
 	  {
 		  Class.forName("com.mysql.jdbc.Driver");
-		  Connection connObject = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/ta", "root", "root");
+		  Connection connObject = DriverManager.getConnection("jdbc:mysql://10.0.0.224:3306/ta", "ta", "root");
 			PrintWriter printWriter = res.getWriter();
             if (connObject != null) 
 			{

@@ -17,7 +17,7 @@ public class ApplicationForm extends HttpServlet{
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException { 
 	    try {
 		    Class.forName("com.mysql.jdbc.Driver");
-		    Connection connObject = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/ta", "root", "root");
+		    Connection connObject = DriverManager.getConnection("jdbc:mysql://10.0.0.224:3306/ta", "ta", "root");
 		    PrintWriter printWriter = res.getWriter();
             Cookie[] cookies = req.getCookies();
             if (connObject != null) {
@@ -62,7 +62,7 @@ public class ApplicationForm extends HttpServlet{
                 String applicationInsertQuery;
 
                 /** Initializing the variables fetching from UI Form */
-                applicantDetails = statement.executeQuery("SELECT * FROM users WHERE znumber='"+username+"' OR email='"+username+"'");
+                applicantDetails = statement.executeQuery("SELECT * FROM ta_applicant WHERE znumber='"+username+"' OR email='"+username+"'");
                 applicantDetails.next();
                 firstname = applicantDetails.getString("firstname");
                 lastname = applicantDetails.getString("lastname");
