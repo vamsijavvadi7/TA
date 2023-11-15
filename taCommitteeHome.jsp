@@ -158,37 +158,6 @@
 
                     <h1 class="text-center my-4">TA Applications</h1>
 
-                    <!-- <div class="mb-3 dropdown">
-                <label for="departmentDropdown" class="form-label">Select Department:</label>
-                <select class="form-select" id="departmentDropdown">
-                    <option value="all">All Departments</option>
-                    <option value="cs">Computer Science</option>
-                    <option value="ee">Electrical Engineering</option>
-                   
-                </select>
-            </div>
-
-            <div class="mb-3 dropdown">
-                <label for="courseDropdown" class="form-label">Select Course:</label>
-                <select class="form-select" id="courseDropdown">
-                    <option value="all">All Courses</option>
-                    <option value="cs101">CS 101</option>
-                    <option value="ee202">EE 202</option>
-                   
-                </select>
-            </div>
-            <div class="mb-3 dropdown">
-                <label for="statusDropdown" class="form-label">Select Status:</label>
-                <select class="form-select" id="statusDropdown">
-                    <option value="all">All Status</option>
-                    <option value="accepted">Accepted</option>
-                    <option value="rejected">Rejected</option>
-
-                    <option value="to-be-reviewed">To Be Reviewed</option>
-                   
-                </select>
-            </div> -->
-
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -198,7 +167,7 @@
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody id="taApplicationsTableBody">
+                        <tbody id="taApplicationsListTableBody">
                             <!-- Table rows will be dynamically added here -->
                         </tbody>
                     </table>
@@ -232,9 +201,6 @@
 
                         <button class="btn btn-primary" id="applyFilters">close</button>
                     </div>
-
-
-
                 </div>
             </div>
 
@@ -301,6 +267,8 @@
                     </div>
                 </div>
             </div>
+
+
             <!-- Add Bootstrap and jQuery JS -->
             <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
@@ -310,26 +278,57 @@
             <script>
                 $(document).ready(function () {
                     // Sample data (you can load this dynamically from a database or API)
-                    var taApplications = [
-                        { name: "John Doe", email: "johndoe@example.com", status: "to-be-reviewed", department: "cs", course: "cs101", level: "Undergraduate", graduationDate: "2023-05-01", cv: "JohnDoe_CV.pdf", workExperience: "Intern at XYZ Corp", experienceMonths: 12 },
-                        { name: "Jane Smith", email: "janesmith@example.com", status: "accepted", department: "ee", course: "ee202", level: "Graduate", graduationDate: "2022-12-01", cv: "JaneSmith_CV.pdf", workExperience: "Research Assistant at ABC University", experienceMonths: 24 },
-                        { name: "Bob Johnson", email: "bobjohnson@example.com", status: "rejected", department: "cs", course: "cs101", level: "Undergraduate", graduationDate: "2023-08-01", cv: "BobJohnson_CV.pdf", workExperience: "Freelance Developer", experienceMonths: 18 }
-                    ];
-                    var uniqueDepartments = [...new Set(taApplications.map(app => app.department))];
+                    // var taApplications = [
+                    //     { name: "John Doe", email: "johndoe@example.com", status: "to-be-reviewed", department: "cs", course: "cs101", level: "Undergraduate", graduationDate: "2023-05-01", cv: "JohnDoe_CV.pdf", workExperience: "Intern at XYZ Corp", experienceMonths: 12 },
+                    //     { name: "Jane Smith", email: "janesmith@example.com", status: "accepted", department: "ee", course: "ee202", level: "Graduate", graduationDate: "2022-12-01", cv: "JaneSmith_CV.pdf", workExperience: "Research Assistant at ABC University", experienceMonths: 24 },
+                    //     { name: "Bob Johnson", email: "bobjohnson@example.com", status: "rejected", department: "cs", course: "cs101", level: "Undergraduate", graduationDate: "2023-08-01", cv: "BobJohnson_CV.pdf", workExperience: "Freelance Developer", experienceMonths: 18 }
+                    // ];
+                    var taApplicationsList = [];
+
+                    <c:forEach items="${applicationsList}" var="app">
+                        var application = {};
+                        application["name"]="${app.firstname} ${app.lastname}";
+                        application["email"]="${app.email}";
+                        application["status"]="${app.status}";
+                        application["instructorFeedbackExists"]="${app.instructorFeedbackExists}";
+                        application["instructorFeedbackName"]="${app.instructorFeedbackName}";
+                        application["instructorFeedbackCourseName"]="${app.instructorFeedbackCourseName}";
+                        application["performanceRating"]="${app.performanceRating}";
+                        application["technicalSkillRating"]="${app.technicalSkillRating}";
+                        application["communicationSkillRating"]="${app.communicationSkillRating}";
+                        application["instructorOverallFeedback"]="${app.instructorOverallFeedback}";
+                        application["departmentName"]="${app.departmentName}";
+                        application["courseName"]="${app.courseName}";
+                        application["id"]="${app.taApplicationId}";
+                        application["znumber"]="${app.znumber}";
+                        application["cgpa"]="${app.cgpa}";
+                        application["presentDepartmentName"]="${app.presentDepartmentName}";
+                        application["educationLevel"]="${app.educationLevel}";
+                        application["graduationDate"]="${app.graduationDate}";
+                        application["cv"]="${app.cv}";
+                        application["previousExperience"]="${app.previousExperience}";
+                        application["expCourse"]="${app.expCourse}";
+                        application["expDuration"]="${app.expDuration}";
+                        application["recommended"]="${app.recommended}";
+                        taApplicationsList.push(application);
+                    </c:forEach>
+                    console.log(taApplicationsList);
+
+                    var uniqueDepartments = [...new Set(taApplicationsList.map(app => app.departmentName))];
                     var departmentDropdown = $("#departmentDropdown");
                     uniqueDepartments.forEach(department => {
                         departmentDropdown.append("<option value='" + department + "'>" + department + "</option>");
                     });
 
                     // Populate unique course names in the course dropdown
-                    var uniqueCourses = [...new Set(taApplications.map(app => app.course))];
+                    var uniqueCourses = [...new Set(taApplicationsList.map(app => app.courseName))];
                     var courseDropdown = $("#courseDropdown");
                     uniqueCourses.forEach(course => {
                         courseDropdown.append("<option value='" + course + "'>" + course + "</option>");
                     });
 
                     // Populate unique status values in the status dropdown
-                    var uniqueStatuses = [...new Set(taApplications.map(app => app.status))];
+                    var uniqueStatuses = [...new Set(taApplicationsList.map(app => app.status))];
                     var statusDropdown = $("#statusDropdown");
                     uniqueStatuses.forEach(status => {
                         statusDropdown.append("<option value='" + status + "'>" + status + "</option>");
@@ -340,7 +339,7 @@
                         var selectedCourse = $("#courseDropdown").val();
                         var selectedStatus = $("#statusDropdown").val();
 
-                        var filteredApplications = taApplications;
+                        var filteredApplications = taApplicationsList;
 
                         if (selectedDepartment !== "all") {
                             filteredApplications = filteredApplications.filter(function (app) {
@@ -361,11 +360,11 @@
                         }
 
                         // Render filtered table rows
-                        var tableBody = $("#taApplicationsTableBody");
+                        var tableBody = $("#taApplicationsListTableBody");
                         tableBody.empty();
 
                         filteredApplications.forEach(function (app) {
-                            var row = "<tr><td>" + app.name + "</td><td>" + app.email + "</td><td>" + app.status + "</td><td><button class='btn btn-primary btn-sm view-application' data-toggle='modal' data-target='#applicationDetailsModal' data-application='" + JSON.stringify(app) + "'><i class='fas fa-search'></i> View Application</button></td></tr>";
+                            var row = "<tr><td>" + app.name + "</td><td>" + app.email + "</td><td>" + app.status + "</td><td><button class='btn btn-primary btn-sm view-application' data-toggle='modal' data-target='#applicationDetailsModal' data-application='" + JSON.stringify(app) + "'> View Application</button></td></tr>";
                             tableBody.append(row);
                         });
                     }
@@ -405,12 +404,12 @@
                         var detailsHtml = "<p><strong>Name:</strong> <span id='applicationcontentdetailsname'>" + applicationData.name + "</span></p>" +
                             "<p><strong>Email:</strong> " + applicationData.email + "</p>" +
                             "<p><strong>Z Number:</strong> " + applicationData.znumber + "</p>" +
-                            "<p><strong>Department:</strong> " + applicationData.department + "</p>" +
-                            "<p><strong>Level of Education:</strong> " + applicationData.level + "</p>" +
+                            "<p><strong>Department:</strong> " + applicationData.departmentName + "</p>" +
+                            "<p><strong>Level of Education:</strong> " + applicationData.educationLevel + "</p>" +
                             "<p><strong>Expected Graduation Date:</strong> " + applicationData.graduationDate + "</p>" +
                             "<p><strong>Curriculum Vitae:</strong> <a href='" + applicationData.cv + "' target='_blank'>Download CV</a></p>" +
-                            "<p><strong>Previous Work Experience:</strong> " + applicationData.workExperience + "</p>" +
-                            "<p><strong>Previous Experience (Months):</strong> " + applicationData.experienceMonths + " months</p>";
+                            "<p><strong>Previous Work Experience:</strong> " + applicationData.previousExperience + "</p>" +
+                            "<p><strong>Previous Experience (Months):</strong> " + applicationData.expDuration + " months</p>";
 
                         modalContent.append(detailsHtml);
                     }
@@ -450,7 +449,7 @@
                     function updateApplicationStatus(name, newStatus) {
                         // You can update the status on the server or in your data structure
                         // For now, let's update the status in the sample data
-                        var application = taApplications.find(function (app) {
+                        var application = taApplicationsList.find(function (app) {
                             return app.name === name;
                         });
 
