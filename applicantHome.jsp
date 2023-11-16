@@ -5,7 +5,6 @@
     <head>
         <meta name="viewport" content="width=device-width initial-scale=1">
         <link href="css/bootstrap.css" rel="stylesheet" />
-        <meta name="viewport" content="width=device-width" />
         <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

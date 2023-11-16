@@ -32,6 +32,12 @@ public class AdminHome extends HttpServlet{
 			        ResultSet userResultSet = userStatement.executeQuery("SELECT * FROM admin WHERE email='" + username + "'");
                     if(userResultSet.next()){
                         req.setAttribute("applicationsList", getApplicationsList(connObject));
+                        req.setAttribute("courseList", getCourseList(connObject));
+                        req.setAttribute("instructorsList", getInstructorsList(connObject));
+                        req.setAttribute("committeeList", getCommitteeList(connObject));
+                        req.setAttribute("taList", "Empty");
+                        req.setAttribute("finalList", "Empty");
+                        req.setAttribute("departmentList", getDepartmentList(connObject));
                         req.getRequestDispatcher("/admin.jsp").forward(req, res);
                     } else{
                         req.getRequestDispatcher("/login.jsp").forward(req, res);
@@ -39,17 +45,6 @@ public class AdminHome extends HttpServlet{
                 } else{
                     req.getRequestDispatcher("/login.jsp").forward(req, res);
                 }
-
-			    
-                // Statement courseStatement = connObject.createStatement();
-                // Statement applicantsStatement = connObject.createStatement();
-                // Statement committeeStatement = connObject.createStatement();
-                // Statement instructorsStatement = connObject.createStatement();
-
-                // ResultSet courseResultSet = courseStatement.executeQuery("SELECT * FROM course");
-                // ResultSet applicantsResultSet = applicantsStatement.executeQuery("SELECT * FROM ta_applicant");
-                // ResultSet committeeResultSet = committeeStatement.executeQuery("SELECT * FROM ta_committee");
-                // ResultSet instructorResultSet = instructorsStatement.executeQuery("SELECT * FROM instructor");
 			    
             } else {
                 printWriter.print("Not connected to the database!");
@@ -73,8 +68,6 @@ public class AdminHome extends HttpServlet{
         "department as selectedDepartment, department as presentDepartment "+ 
         "WHERE application.course_id=course.id AND application.department_id=selectedDepartment.id AND "+
         "application.present_department=presentDepartment.id";
-
-        
         Statement applicationsStatement=null;
         Statement feedbackStatement=null;
         ResultSet feedbackResultSet=null;
@@ -96,7 +89,6 @@ public class AdminHome extends HttpServlet{
                     String instructorFeedbackQuery="SELECT instructor_feedback.*, course.course_name FROM instructor_feedback, course WHERE instructor_feedback.id='"+instructorFeedbackId+"' AND instructor_feedback.course_id=course.id";
                     feedbackResultSet = feedbackStatement.executeQuery(instructorFeedbackQuery);
                     feedbackResultSet.next();
-
                     application.setInstructorFeedbackExists(true);
                     application.setInstructorFeedbackName(feedbackResultSet.getString("instructor_name"));
                     application.setInstructorFeedbackCourseName(feedbackResultSet.getString("course_name"));
@@ -125,10 +117,122 @@ public class AdminHome extends HttpServlet{
                 applicationsList.add(application);
             }
         }catch (Exception e) {
-            e.printStackTrace();    
+            e.printStackTrace();   
         }
         System.out.println("==== In getApplicationsList Method End ==== ");
         return applicationsList;
+    }
+
+    public List<CourseData> getCourseList(Connection con) {
+
+        String courseDataQuery = "SELECT course.*, instructor.first_name, instructor.last_name, department.department_name "+
+        "FROM course, instructor, department WHERE course.department_id=department.id AND course.instructor_id=instructor.id";
+
+        
+        Statement courseStatement=null;
+        ResultSet courseResultSet=null;
+        List<CourseData> courseList = new ArrayList<CourseData>();
+        System.out.println("==== In getCourseList Method Start==== ");
+        try 
+        {
+            courseStatement = con.createStatement();
+            courseResultSet = courseStatement.executeQuery(courseDataQuery);
+            while(courseResultSet.next()){
+                CourseData course = new CourseData();
+                course.setDepartmentName(courseResultSet.getString("department_name"));
+                course.setCourseName(courseResultSet.getString("course_name"));
+                course.setCourseId(courseResultSet.getInt("id"));
+                course.setStatus(courseResultSet.getBoolean("status"));
+                course.setDepartmentId(courseResultSet.getInt("department_id"));
+                course.setInstructorName(courseResultSet.getString("first_name")+" "+courseResultSet.getString("last_name"));
+                courseList.add(course);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();    
+        }
+        System.out.println("==== In getCourseList Method End ==== ");
+        return courseList;
+    }
+
+    public List<InstructorBean> getInstructorsList(Connection con) {
+
+        String instructorDataQuery = "SELECT instructor.*, department.department_name "+
+        "FROM instructor, department WHERE instructor.department_id=department.id";
+
+        
+        Statement instructorStatement=null;
+        ResultSet instructorResultSet=null;
+        List<InstructorBean> instructorsList = new ArrayList<InstructorBean>();
+        System.out.println("==== In getInstructorsList Method Start==== ");
+        try 
+        {
+            instructorStatement = con.createStatement();
+            instructorResultSet = instructorStatement.executeQuery(instructorDataQuery);
+            while(instructorResultSet.next()){
+                InstructorBean instructor = new InstructorBean();
+                instructor.setDepartmentName(instructorResultSet.getString("department_name"));
+                instructor.setCourseName(instructorResultSet.getString("course_name"));
+                instructor.setId(instructorResultSet.getInt("id"));
+                instructor.setEmail(instructorResultSet.getString("email"));
+                instructor.setInstructorName(instructorResultSet.getString("first_name")+" "+instructorResultSet.getString("last_name"));
+                instructorsList.add(instructor);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();    
+        }
+        System.out.println("==== In getInstructorsList Method End ==== ");
+        return instructorsList;
+    }
+
+    public List<CommitteeBean> getCommitteeList(Connection con) {
+
+        String committeeDataQuery = "SELECT * FROM ta_committee";
+
+        
+        Statement committeeStatement=null;
+        ResultSet committeeResultSet=null;
+        List<CommitteeBean> committeeList = new ArrayList<CommitteeBean>();
+        System.out.println("==== In getcommitteeList Method Start==== ");
+        try 
+        {
+            committeeStatement = con.createStatement();
+            committeeResultSet = committeeStatement.executeQuery(committeeDataQuery);
+            while(committeeResultSet.next()){
+                CommitteeBean committee = new CommitteeBean();
+                committee.setName(committeeResultSet.getString("first_name")+" "+committeeResultSet.getString("last_name"));
+                committee.setId(committeeResultSet.getInt("id"));
+                committee.setEmail(committeeResultSet.getString("email"));
+                committeeList.add(committee);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();    
+        }
+        System.out.println("==== In getcommitteeList Method End ==== ");
+        return committeeList;
+    }
+
+    public List<DepartmentData> getDepartmentList(Connection con) {
+
+        String departmentDataQuery = "SELECT * FROM department";
+        Statement departmentStatement=null;
+        ResultSet departmentResultSet=null;
+        List<DepartmentData> departmentList = new ArrayList<DepartmentData>();
+        System.out.println("==== In getDepartmentList Method Start==== ");
+        try 
+        {
+            departmentStatement = con.createStatement();
+            departmentResultSet = departmentStatement.executeQuery(departmentDataQuery);
+            while(departmentResultSet.next()){
+                DepartmentData department = new DepartmentData();
+                department.setDepartmentId(departmentResultSet.getInt("id"));
+                department.setDepartmentName(departmentResultSet.getString("department_name"));
+                departmentList.add(department);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();    
+        }
+        System.out.println("==== In getdepartmentList Method End ==== ");
+        return departmentList;
     }
 
 }
