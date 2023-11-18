@@ -118,14 +118,17 @@
                 display: none;
                 text-align:center;
             }
-            #addCommitteeForm{
+            #CommitteeForm{
+                width:50%;
                 display:none;
             }
             #addInstructorForm{
                 display:none;
+                width:50%;
             }
-            #addCourseForm{
+            #courseForm{
                 display: none;
+                width:50%;
             }
             #instructorsTable{
                 width:75%;
@@ -166,6 +169,12 @@
             }
             .table-wrapper-scroll-y {
                 display: block;
+            }
+            #updateMsg{
+                padding-left:10%;
+            }
+            #committeeForm{
+                display:none;
             }
         </style>
     </head>
@@ -300,6 +309,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="applicationDetailsModalLabel">Application Details</h5>
+                        <div id="updateMsg"></div>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -307,9 +317,11 @@
                     <div class="modal-body" id="applicationDetailsContent">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" id="approveApplication">Approve</button>
-                        <button type="button" class="btn btn-danger" id="rejectApplication">Reject</button>
-                        <button type="button" class="btn btn-warning" id="reviewApplication">Review</button>
+                        <div>
+                            <strong>Note:</strong> Recommend the best skill match application for Committee
+                        </div>
+                        <button type="button" class="btn btn-success" id="recommendApplicationBtn">Recommend</button>
+                        <button type="button" class="btn btn-danger" id="undoApplicationBtn">Undo</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -320,20 +332,30 @@
             <div id="content">
                 <h2>Manage Instructors</h2>
                 <div class="addRemoveButtons">
-                    <button type="button" class="btn btn-primary custom-btn" id="addInstructorsBtn">Add</button>
+                    <button type="button" class="btn btn-primary custom-btn" id="showInstructorFormBtn">New Instructor</button>
                     <button type="button" class="btn btn-danger custom-btn" id="removeInstructorsBtn">Remove</button>
                 </div>
-                <form id="addInstructorForm">
-                    <div class="form-group">
-                        <label for="instructorName">Name:</label>
-                        <input type="text" class="form-control" id="instructorName" name="instructorName" required>
-                    </div>  
-                    <div class="form-group">
-                        <label for="instructorCourse">Course:</label>
-                        <input type="text" class="form-control" id="instructorCourse" name="instructorCourse" required>
-                    </div>
-                </form>
                 <center>
+                    <form id="addInstructorForm" name="addInstructorForm" method="POST">
+                        <div class="form-group">
+                            <!-- <label for="instructorName">Name:</label> -->
+                            <input type="text" class="form-control" id="instructorName" name="instructorName" placeholder="Enter new instructor name" required>
+                        </div>
+                        <div class="form-group">
+                            <!-- <label for="instructorName">Name:</label> -->
+                            <input type="email" class="form-control" id="instructorEmail" name="instructorEmail" placeholder="Enter instructor Email" required>
+                        </div>
+                        <div class="form-group">
+                            <!-- <label for="instructorName">Name:</label> -->
+                            <input type="password" class="form-control" id="instructorPassword" name="instructorPassword" placeholder="Enter password" required>
+                        </div>
+                        <div class="form-group" >
+                            <select class="form-control" id="instructorCourseDropdown" >
+                                <option value="0">--- select instructor course ---</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="addInstructorbtn">Add</button>
+                    </form>
                     <table class="table table-hover" id="instructorsTable">
                         <thead>
                           <tr>
@@ -356,25 +378,23 @@
             <div id="content">
                 <h2>Manage Committee Members</h2>
                 <div class="addRemoveButtons">
-                    <button type="button" class="btn btn-primary custom-btn" id="addCommitteeBtn">Add</button>
+                    <button type="button" class="btn btn-primary custom-btn" id="showCommitteeFormBtn">Add New Member</button>
                     <button type="button" class="btn btn-danger custom-btn" id="removeCommitteeBtn">Remove</button>
                 </div>
-                <form id="addCommitteeForm">
-                    <div class="form-group">
-                        <label for="CommitteeMemberName">Name:</label>
-                        <input type="text" class="form-control" id="CommitteeMemberName" name="CommitteeMemberName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="CommitteeMemberCourse">Course:</label>
-                        <input type="text" class="form-control" id="CommitteeMemberCourse" name="CommitteeMemberCourse" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="CommitteeMemberDepartment">Department:</label>
-                        <input type="text" class="form-control" id="CommitteeMemberDepartment" name="CommitteeMemberDepartment" required>
-                    </div>
-                </form>
                 <center>
-                    <table class="table table-hover" id="committeeTable">
+                <form id="committeeForm" method="POST" name="committeeForm">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="name" id="committeeMemberName" placeholder="Enter Committee Member Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control" name="email" id="committeeMemberEmail" placeholder="Enter Committee Member Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" id="committeeMemberPassword" placeholder="Enter Committee Member Password" required>
+                    </div>
+                    <button class="btn btn-primary" id="addCommitteeBtn">Add</button>
+                </form>
+                <table class="table table-hover" id="committeeTable">
                     <thead>
                       <tr>
                         <th scope="col">#</th>
@@ -385,7 +405,7 @@
                       </tr>
                     </thead>
                     <tbody></tbody>
-                    </table>
+                </table>
                 </center>
             </div>
         </div>
@@ -393,24 +413,37 @@
         <div id="manageCoursesScreen">
             <h2>Manage Courses</h2>
             <div class="addRemoveButtons">
-                <button type="button" class="btn btn-primary custom-btn" id="addCourseBtn">Add</button>
+                <button type="button" class="btn btn-primary custom-btn" id="showCourseFormBtn">Add New Course</button>
                 <button type="button" class="btn btn-danger custom-btn" id="removeCourseBtn">Remove</button>
             </div>
-            <form id="addCourseForm">
-                <div class="form-group">
-                    <label for="CommitteeMemberName">Name:</label>
-                    <input type="text" class="form-control" id="CommitteeMemberName" name="CommitteeMemberName" required>
-                </div>
-                <div class="form-group">
-                    <label for="CommitteeMemberCourse">Course:</label>
-                    <input type="text" class="form-control" id="CommitteeMemberCourse" name="CommitteeMemberCourse" required>
-                </div>
-                <div class="form-group">
-                    <label for="CommitteeMemberDepartment">Department:</label>
-                    <input type="text" class="form-control" id="CommitteeMemberDepartment" name="CommitteeMemberDepartment" required>
-                </div>
-            </form>
             <center>
+                <form id="courseForm">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="courseNameCourse" placeholder="Enter course name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="departmentNameCourse" placeholder="Enter department name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" id="status1">
+                        <label class="form-check-label" for="status1">
+                          Yes
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" id="status2" checked>
+                        <label class="form-check-label" for="status2">
+                          No
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="instructorNameCourse" required>
+                    </div>
+                    <button class="btn btn-primary" id="addCourseBtn">Add</button>
+                </form>
                 <table class="table table-hover" id="coursesTable">
                 <thead>
                   <tr>
@@ -437,9 +470,7 @@
     <script>
         $(document).ready(function () {
 
-            // $('#applicationsTable').DataTable({
-            //     "scrollY": "50vh"
-            // });
+            var presentApplication = null;
 
             var courseList = [];
             <c:forEach items="${courseList}" var="course">
@@ -455,9 +486,14 @@
             console.log(courseList);
 
             var departmentNamesList = [];
+            var departmentList =[];
             <c:forEach items="${departmentList}" var="dept">
+                var departmentObj = {};
                 departmentNamesList.push("${dept.departmentName}");
-            </c:forEach>
+                departmentObj["departmentId"]="${dept.departmentId}";
+                departmentObj["departmentName"] = "${dept.departmentName}";
+                departmentList.push(departmentObj);
+                </c:forEach>
             console.log(departmentNamesList);
 
             var instructorsList = [];
@@ -488,6 +524,7 @@
                 application["name"]="${app.firstname} ${app.lastname}";
                 application["email"]="${app.email}";
                 application["status"]="${app.status}";
+                application["applicationId"]="${app.taApplicationId}";
                 application["instructorFeedbackExists"]="${app.instructorFeedbackExists}";
                 application["instructorFeedbackName"]="${app.instructorFeedbackName}";
                 application["instructorFeedbackCourseName"]="${app.instructorFeedbackCourseName}";
@@ -512,42 +549,6 @@
             </c:forEach>
             console.log(taApplicationsList);
 
-            var committeeTableRows = "";
-            committeeList.forEach((committee, index)=>{
-                // console.log(committee);
-                let val = index+1;
-                committeeTableRows+= "<tr> <th scope='row'>"+val+"</th>"+
-                        "<td>"+committee.id+"</td>"+
-                        "<td>"+committee.name+"</td>"+
-                        "<td>"+committee.email+"</td>"+
-                        `<td>
-                            <div class='form-check'>
-                                <input class='form-check-input CCheckbox' type='checkbox' id='flexCheckDefault'>
-                            </div>
-                        </td>
-                      </tr>`;
-            });
-            $("#committeeTable").find('tbody').append(committeeTableRows);
-
-            var instructorTableRows = "";
-            instructorsList.forEach((instructor, index)=>{
-                // console.log(instructor);
-                let val = index+1;
-                instructorTableRows+= "<tr> <th scope='row'>"+val+"</th>"+
-                        "<td>"+instructor.id+"</td>"+
-                        "<td>"+instructor.instructorName+"</td>"+
-                        "<td>"+instructor.email+"</td>"+
-                        "<td>"+instructor.courseName+"</td>"+
-                        "<td>"+instructor.departmentName+"</td>"+
-                        `<td>
-                            <div class='form-check'>
-                                <input class='form-check-input ICheckbox' type='checkbox' id='flexCheckDefault'>
-                            </div>
-                        </td>
-                      </tr>`;
-            });
-            $("#instructorsTable").find('tbody').append(instructorTableRows);
-
             var coursesTableRows = "";
             var courseNamesList=[];
             courseList.forEach((course, index)=>{
@@ -566,28 +567,80 @@
                             </div>
                         </td>
                       </tr>`;
+                var courseId = course.id;
+                var courseName = course.courseName;
+                $("#instructorCourseDropdown").append("<option value='"+courseId+"'>"+courseName+"</option>");
             });
             $("#coursesTable").find('tbody').append(coursesTableRows);
 
+            loadInstructorTable(instructorsList);
+            loadCommitteeTable(committeeList);
+
             $("#removeInstructorsBtn").click(function(){
-                var selectedUsers=[];
+                var selectedInstructorIds=[];
+                var selectedRows = [];
                 $('.ICheckbox:checked').each(function() {
                     var row = $(this).closest('tr');
-                    selectedUsers.push(row.find('th').text());
-                    row.remove();
+                    selectedRows.push(row);
+                    selectedInstructorIds.push(row.find('td:eq(0)').text());
                 });
-                console.log(selectedUsers);
+                var selectedInstructorsIdsString = selectedInstructorIds.join();
+                $.ajax({
+                    type: "POST",
+                    url: "addRemoveInstructor",
+                    data:{
+                            ids:selectedInstructorsIdsString,
+                            action:"remove"
+                        },
+                    success: function (result) {
+                        if (result == "success") {
+                            console.log("Success");
+                            selectedRows.forEach((row)=>{
+                                row.remove();
+                            });
+                            // loadInstructorTable(instructorsList);
+                        }else{
+                            alert(result+ " Not Removed!!");
+                        }
+                    },
+                    error: function (err) {
+                        alert("ERROR: ", err);
+                    }
+                });
             });
 
             $("#removeCommitteeBtn").click(function(){
-                var selectedUsers=[];
+                var selectedUserIds=[];
+                var rows = [];
                 $('.CCheckbox:checked').each(function() {
                     var row = $(this).closest('tr');
-                    selectedUsers.push(row.find('th').text());
-                    row.remove();
+                    selectedUserIds.push(row.find('td:eq(0)').text());
+                    rows.push(row);
                 });
 
-                console.log(selectedUsers);
+                var selectedUserIdsString = selectedUserIds.join();
+                $.ajax({
+                    type: "POST",
+                    url: "addRemoveCommittee",
+                    data:{
+                            ids:selectedUserIdsString,
+                            action:"remove"
+                        },
+                    success: function (result) {
+                        if (result == "success") {
+                            console.log("Success");
+                            rows.forEach((row)=>{
+                                row.remove();
+                            });
+                            // loadCommitteeTable(committeeList);
+                        }else{
+                            alert(result+ " Not Removed!!");
+                        }
+                    },
+                    error: function (err) {
+                        alert("ERROR: ", err);
+                    }
+                });
             });
 
             $("#removeCourseBtn").click(function(){
@@ -635,6 +688,154 @@
                 $("#applicationsContainer").hide();
                 $("#manageInstructorsScreen").hide();
                 $("#manageCommitteeScreen").hide();
+            });
+
+            $("#showInstructorFormBtn").click(()=>{
+                $("#addInstructorForm").toggle();
+            });
+
+            $("#showCommitteeFormBtn").click(()=>{
+                $("#committeeForm").toggle();
+            });
+
+            $("#showCourseFormBtn").click(()=>{
+                $("#courseForm").toggle();
+            });
+
+            $("#committeeForm").click((event)=>{
+                event.preventDefault();
+            });
+
+            $("#addInstructorForm").click(function(event){
+                event.preventDefault();
+            });
+
+            $("#closeInstructorFormBtn").click(()=>{
+                $("#addInstructorForm").fade();
+            });
+
+            $("#addInstructorbtn").click(()=>{
+                var name = $("#instructorName").val();
+                var email = $("#instructorEmail").val();
+                var password = $("#instructorPassword").val();
+                var courseId = $("#instructorCourseDropdown").val();
+                console.log(courseId);
+                var course = courseList.find((course)=>{ if(course.id == courseId){ return course; }});
+                console.log(course);
+                var courseName = course.courseName;
+                var departmentId = course.departmentId;
+                var department = departmentList.find((dept)=>{ return dept.departmentId==departmentId });
+                var departmentName = department.departmentName;
+
+                if(name !=="" && email!=="" && password!=="" && course!==""){
+                    $.ajax({
+                        type: "POST",
+                        url: "addRemoveInstructor",
+                        data:{
+                                name:name,
+                                email:email,
+                                password:password,
+                                courseId:courseId,
+                                courseName:courseName,
+                                departmentId:departmentId,
+                                action:"add",
+                            },
+                        success: function (result) {
+                            if (result != "No Id" && result !="failed") {
+                                console.log("Success");
+                                var instructor = {};
+                                instructor["id"]=result;
+                                instructor["departmentName"]=departmentName;
+                                instructor["courseName"]=courseName;
+                                instructor["instructorName"]=name;
+                                instructor["email"]=email;
+                                instructorsList.push(instructor);
+                                loadInstructorTable(instructorsList);
+                                
+                            }else{
+                                alert(result+ " Not Added!!");
+                            }
+                        },
+                        error: function (err) {
+                            alert("ERROR: ", err);
+                        }
+                    });
+                }
+            })
+
+            $("#addCommitteeBtn").click(()=>{
+                var name = $("#committeeMemberName").val();
+                var email = $("#committeeMemberEmail").val();
+                var password = $("#committeeMemberPassword").val();
+                console.log(name, email, password);
+
+                if(name !=="" && email!=="" && password!==""){
+                    $.ajax({
+                        type: "POST",
+                        url: "addRemoveCommittee",
+                        data:{
+                                name:name,
+                                email:email,
+                                password:password,
+                                action:"add"
+                            },
+                        success: function (result) {
+                            if (result != "No Id" && result !="failed") {
+                                console.log("Success");
+                                var committee = {};
+                                committee["id"]=result;
+                                committee["name"]=name;
+                                committee["email"]=email;
+                                committeeList.push(committee);
+                                loadCommitteeTable(committeeList);
+                                
+                            }else{
+                                alert(result+ " Not Added!!");
+                            }
+                        },
+                        error: function (err) {
+                            alert("ERROR: ", err);
+                        }
+                    });
+                }
+            });
+
+            $("#addCourseBtn").click(()=>{
+                var courseName = $("#courseNameCourse").val();
+                var departmentName = $("#departmentNameCourse").val();
+                var status = $("input[name='status']").val();
+                var instructorName = $("#instructorNameCourse").val();
+
+                if(courseName !=="" && departmentName!=="" && status!=="" && instructorName!==""){
+                    $.ajax({
+                        type: "POST",
+                        url: "addRemoveCourse",
+                        data:{
+                                courseName:courseName,
+                                departmentName:departmentName,
+                                status:status,
+                                instructorName:instructorName,
+                                action:"add"
+                            },
+                        success: function (result) {
+                            if (result != "No Id" && result !="failed") {
+                                console.log("Success");
+                                var committee = {};
+                                committee["id"]=result;
+                                committee["name"]=name;
+                                committee["email"]=email;
+                                committeeList.push(committee);
+                                loadCommitteeTable(committeeList);
+                                
+                            }else{
+                                alert(result+ " Not Added!!");
+                            }
+                        },
+                        error: function (err) {
+                            alert("ERROR: ", err);
+                        }
+                    });
+                }
             });
 
             function logout() {
@@ -717,81 +918,83 @@
                 $("#profileModal").modal("hide");
             });
 
-            // Event listener for viewing application details
             $(document).on("click", ".view-application", function () {
                 var applicationData = $(this).data("application");
                 renderApplicationDetails(applicationData);
+                presentApplication = applicationData;
             });
 
-            // Function to render application details in the modal
-            // Function to render application details in the modal
             function renderApplicationDetails(applicationData) {
                 var modalContent = $("#applicationDetailsContent");
                 modalContent.empty();
+                var cvExtension = application.cv.split('.').pop();
 
-                // You can customize the layout and content of the modal here
                 var detailsHtml = "<p><strong>Name:</strong> <span id='applicationcontentdetailsname'>" + applicationData.name + "</span></p>" +
+                    "<p><strong>Application Id:</strong><span id='appId'>" + applicationData.applicationId + "</span></p>" +
                     "<p><strong>Email:</strong> " + applicationData.email + "</p>" +
                     "<p><strong>Z Number:</strong> " + applicationData.znumber + "</p>" +
                     "<p><strong>Department:</strong> " + applicationData.departmentName + "</p>" +
                     "<p><strong>Level of Education:</strong> " + applicationData.educationLevel + "</p>" +
                     "<p><strong>Expected Graduation Date:</strong> " + applicationData.graduationDate + "</p>" +
-                    "<p><strong>Curriculum Vitae:</strong> <a href='" + applicationData.cv + "' target='_blank'>Download CV</a></p>" +
+                    "<p><strong>Curriculum Vitae:</strong> <a href='uploads/" + applicationData.znumber + "."+cvExtension+"' target='_blank'>Download CV</a></p>" +
                     "<p><strong>Previous Work Experience:</strong> " + applicationData.previousExperience + "</p>" +
-                    "<p><strong>Previous Experience (Months):</strong> " + applicationData.expDuration + " months</p>";
+                    "<p><strong>Previous Experience (Months):</strong> " + applicationData.expDuration + " months</p>"+
+                    "<p><strong>Best Match :</strong> " + applicationData.recommended + "</p>";
 
                 modalContent.append(detailsHtml);
             }
 
             // Event listener for accepting an application
-            $("#approveApplication").click(()=>{
+            $("#recommendApplicationBtn").click(()=>{
                 var applicationData = {
-                    name: $("#applicationcontentdetailsname").text(),
+                    applicationId: $("#appId").text(),
                 };
-                updateApplicationStatus(applicationData.name, "Approved");
-                $("#applicationDetailsModal").modal("hide");
-                console.log("Accepted application for: " + applicationData.name);
+                updateApplicationStatus(applicationData.applicationId, true);
             });
 
-            $("#rejectApplication").click(()=>{
+            $("#undoApplicationBtn").click(()=>{
                 var applicationData = {
-                    name: $("#applicationcontentdetailsname").text(),
+                    applicationId: $("#appId").text(),
                 };
-                updateApplicationStatus(applicationData.name, "Rejected");
-                $("#applicationDetailsModal").modal("hide");
-                console.log("Rejected application");
+                updateApplicationStatus(applicationData.applicationId, false);
             });
 
-            function updateApplicationStatus(name, newStatus) {
+            function updateApplicationStatus(applicationId, recommended) {
                 var application = taApplicationsList.find(function (app) {
-                    return app.name === name;
+                    return app.applicationId === applicationId;
                 });
-
-                if (application) {
-                    // $.ajax({
-                    //     type: "POST",
-                    //     url: "updateApplicationStatus",
-                    //     data:{
-                    //             applicantId:application.id,
-                    //             status:newStatus
-                    //         },
-                    //     success: function (result) {
-                    //         if (result == "success") {
-                    //             // window.location.href = "applicationStatus";
-                    //             console.log("Success");
-                    //         }
-                    //         alert(result);
-                    //     },
-                    //     error: function (err) {
-                    //         alert("ERROR: ", err);
-                    //     }
-                    // });
-
-                    application.status = newStatus;
-                    renderTable();
+                if (!!application) {
+                    $.ajax({
+                        type: "POST",
+                        url: "recommendApplication",
+                        data:{
+                                applicationId:application.applicationId,
+                                recommended:recommended
+                            },
+                        success: function (result) {
+                            if (result == "success") {
+                                console.log("Success");
+                                application.recommended = recommended;
+                                $("#updateMsg").html("Application updated successfully! <span style='color:green'> &#10004 </span>");
+                                renderApplicationDetails(application);
+                                renderTable();
+                                sleep(3000).then(()=>{
+                                    $("#updateMsg").empty();
+                                    $("#applicationDetailsModal").modal("hide");
+                                });
+                            }else{
+                                alert(result+ " Not updated!!");
+                            }
+                        },
+                        error: function (err) {
+                            alert("ERROR: ", err);
+                        }
+                    });
+                }else{
+                    alert("No application filtered!!");
                 }
             }
-            // Filter Icon Click Event
+            
             $("#filterIcon").click(function () {
                 $("#filterDropdown").toggle();
             });
@@ -802,5 +1005,47 @@
                 renderTable();
             });
         });
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        function loadInstructorTable(list){
+            var instructorTableRows = "";
+            list.forEach((instructor, index)=>{
+                // console.log(instructor);
+                let val = index+1;
+                instructorTableRows+= "<tr> <th scope='row'>"+val+"</th>"+
+                        "<td>"+instructor.id+"</td>"+
+                        "<td>"+instructor.instructorName+"</td>"+
+                        "<td>"+instructor.email+"</td>"+
+                        "<td>"+instructor.courseName+"</td>"+
+                        "<td>"+instructor.departmentName+"</td>"+
+                        `<td>
+                            <div class='form-check'>
+                                <input class='form-check-input ICheckbox' type='checkbox' id='flexCheckDefault'>
+                            </div>
+                        </td>
+                      </tr>`;
+            });
+            $("#instructorsTable").find('tbody').empty();
+            $("#instructorsTable").find('tbody').append(instructorTableRows);
+        }
+        function loadCommitteeTable(list){
+            var committeeTableRows = "";
+            list.forEach((committee, index)=>{
+                let val = index+1;
+                committeeTableRows+= "<tr> <th scope='row'>"+val+"</th>"+
+                        "<td>"+committee.id+"</td>"+
+                        "<td>"+committee.name+"</td>"+
+                        "<td>"+committee.email+"</td>"+
+                        `<td>
+                            <div class='form-check'>
+                                <input class='form-check-input CCheckbox' type='checkbox' id='flexCheckDefault'>
+                            </div>
+                        </td>
+                      </tr>`;
+            });
+            $("#committeeTable").find('tbody').empty();
+            $("#committeeTable").find('tbody').append(committeeTableRows);
+        }
     </script>
 </html>
