@@ -1,6 +1,7 @@
 import java.io.Serializable;
 
-public class TaData implements Serializable {
+
+public class TaFeedbackData implements Serializable {
 
     private int taId;
     private String taName;
@@ -9,9 +10,14 @@ public class TaData implements Serializable {
     private int courseId;
     private int departmentId;
     private String email;
-    private int taApplicationId;
     private boolean offerSent;
     private String offerStatus;
+    private int instructorFeedbackId;
+    private String instructorName;
+    private int performanceRating;
+    private int technicalSkill;
+    private int communicationSkill;
+    private String overallFeedback;
 
     // Constructors, getters, and setters
 
@@ -71,14 +77,6 @@ public class TaData implements Serializable {
         this.email = email;
     }
 
-    public int getTaApplicationId() {
-        return taApplicationId;
-    }
-
-    public void setTaApplicationId(int taApplicationId) {
-        this.taApplicationId = taApplicationId;
-    }
-
     public boolean isOfferSent() {
         return offerSent;
     }
@@ -93,5 +91,53 @@ public class TaData implements Serializable {
 
     public void setOfferStatus(String offerStatus) {
         this.offerStatus = offerStatus;
+    }
+
+    public int getInstructorFeedbackId() {
+        return instructorFeedbackId;
+    }
+
+    public void setInstructorFeedbackId(int instructorFeedbackId) {
+        this.instructorFeedbackId = instructorFeedbackId;
+    }
+
+    public String getInstructorName() {
+        return instructorName;
+    }
+
+    public void setInstructorName(String instructorName) {
+        this.instructorName = instructorName;
+    }
+
+    public int getPerformanceRating() {
+        return performanceRating;
+    }
+
+    public void setPerformanceRating(int performanceRating) {
+        this.performanceRating = performanceRating;
+    }
+
+    public int getTechnicalSkill() {
+        return technicalSkill;
+    }
+
+    public void setTechnicalSkill(int technicalSkill) {
+        this.technicalSkill = technicalSkill;
+    }
+
+    public int getCommunicationSkill() {
+        return communicationSkill;
+    }
+
+    public void setCommunicationSkill(int communicationSkill) {
+        this.communicationSkill = communicationSkill;
+    }
+
+    public String getOverallFeedback() {
+        return overallFeedback;
+    }
+
+    public void setOverallFeedback(String overallFeedback) {
+        this.overallFeedback = overallFeedback;
     }
 }
