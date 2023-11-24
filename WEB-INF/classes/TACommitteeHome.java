@@ -17,7 +17,7 @@ public class TACommitteeHome extends HttpServlet{
 			    res.setContentType("text/html");
 			    String username="", usertype="";
     
-                for(int i=0; i < cookies.length; i++) {
+                for(int i=0; cookies!=null && i < cookies.length; i++) {
                       if("TAusername".equals(cookies[i].getName())) {
                           username = cookies[i].getValue();
                       }
@@ -31,6 +31,13 @@ public class TACommitteeHome extends HttpServlet{
 			        ResultSet userResultSet = userStatement.executeQuery("SELECT * FROM ta_committee WHERE email='" + username + "'");
                     if(userResultSet.next()){
                         req.setAttribute("applicationsList", getApplicationsList(connObject));
+                        req.setAttribute("approvedApplicationsList", getApprovedApplicationsList(connObject));
+                        req.setAttribute("courseList", getCourseList(connObject));
+                        req.setAttribute("departmentList", getDepartmentList(connObject));
+                        req.setAttribute("firstname",userResultSet.getString("firstname"));
+                        req.setAttribute("lastname",userResultSet.getString("lastname"));
+                        req.setAttribute("email",userResultSet.getString("email"));
+                        req.setAttribute("password",userResultSet.getString("password"));
                         req.getRequestDispatcher("/taCommitteeHome.jsp").forward(req, res);
                     } else{
                         req.getRequestDispatcher("/login.jsp").forward(req, res);
@@ -54,15 +61,15 @@ public class TACommitteeHome extends HttpServlet{
 
     public List<TaApplicationData> getApplicationsList(Connection con) {
 
-        String applicationDataQuery = "SELECT application.*, course.course_name, selectedDepartment.department_name as selected_department_name, "+
+        String applicationDataQuery = ""+
+        "SELECT application.*, instructor.firstname as instructorFirstname, instructor.lastname as instructorLastname, "+
+        "course.course_name, selectedDepartment.department_name as selected_department_name, "+
         "presentDepartment.department_name as present_department_name, CASE WHEN application.instructor_feedback_id IS NOT NULL "+
         "THEN (SELECT overall_feedback from instructor_feedback WHERE instructor_feedback.id=application.instructor_feedback_id) "+
-        "ELSE 'NONE' END AS overall_feedback FROM ta_application as application, course, "+
-        "department as selectedDepartment, department as presentDepartment "+ 
+        "ELSE 'NONE' END AS overall_feedback FROM ta_application as application, course, instructor, "+
+        "department as selectedDepartment, department as presentDepartment "+
         "WHERE application.course_id=course.id AND application.department_id=selectedDepartment.id AND "+
-        "application.present_department=presentDepartment.id";
-
-        
+        "application.present_department=presentDepartment.id AND application.instructor_id=instructor.id";
         Statement applicationsStatement=null;
         Statement feedbackStatement=null;
         ResultSet feedbackResultSet=null;
@@ -84,7 +91,6 @@ public class TACommitteeHome extends HttpServlet{
                     String instructorFeedbackQuery="SELECT instructor_feedback.*, course.course_name FROM instructor_feedback, course WHERE instructor_feedback.id='"+instructorFeedbackId+"' AND instructor_feedback.course_id=course.id";
                     feedbackResultSet = feedbackStatement.executeQuery(instructorFeedbackQuery);
                     feedbackResultSet.next();
-
                     application.setInstructorFeedbackExists(true);
                     application.setInstructorFeedbackName(feedbackResultSet.getString("instructor_name"));
                     application.setInstructorFeedbackCourseName(feedbackResultSet.getString("course_name"));
@@ -95,6 +101,7 @@ public class TACommitteeHome extends HttpServlet{
                 }
                 application.setDepartmentName(applicationsResultSet.getString("selected_department_name"));
                 application.setCourseName(applicationsResultSet.getString("course_name"));
+                application.setCourseInstructorName(applicationsResultSet.getString("instructorFirstname")+" "+ applicationsResultSet.getString("instructorLastname"));
                 application.setTaApplicationId(applicationsResultSet.getInt("id"));
                 application.setFirstname(applicationsResultSet.getString("firstname"));
                 application.setLastname(applicationsResultSet.getString("lastname"));
@@ -117,6 +124,89 @@ public class TACommitteeHome extends HttpServlet{
         }
         System.out.println("==== In getApplicationsList Method End ==== ");
         return applicationsList;
+    }
+
+    public List<CourseData> getCourseList(Connection con) {
+
+        String courseDataQuery = "SELECT course.*, instructor.firstname, instructor.lastname, department.department_name "+
+        "FROM course, instructor, department WHERE course.department_id=department.id AND course.instructor_id=instructor.id";
+
+        
+        Statement courseStatement=null;
+        ResultSet courseResultSet=null;
+        List<CourseData> courseList = new ArrayList<CourseData>();
+        System.out.println("==== In getCourseList Method Start==== ");
+        try 
+        {
+            courseStatement = con.createStatement();
+            courseResultSet = courseStatement.executeQuery(courseDataQuery);
+            while(courseResultSet.next()){
+                CourseData course = new CourseData();
+                course.setDepartmentName(courseResultSet.getString("department_name"));
+                course.setCourseName(courseResultSet.getString("course_name"));
+                course.setCourseId(courseResultSet.getInt("id"));
+                course.setStatus(courseResultSet.getBoolean("status"));
+                course.setDepartmentId(courseResultSet.getInt("department_id"));
+                course.setInstructorName(courseResultSet.getString("firstname")+" "+courseResultSet.getString("lastname"));
+                courseList.add(course);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();    
+        }
+        System.out.println("==== In getCourseList Method End ==== ");
+        return courseList;
+    }
+
+    public List<DepartmentData> getDepartmentList(Connection con) {
+
+        String departmentDataQuery = "SELECT * FROM department";
+        Statement departmentStatement=null;
+        ResultSet departmentResultSet=null;
+        List<DepartmentData> departmentList = new ArrayList<DepartmentData>();
+        System.out.println("==== In getDepartmentList Method Start==== ");
+        try 
+        {
+            departmentStatement = con.createStatement();
+            departmentResultSet = departmentStatement.executeQuery(departmentDataQuery);
+            while(departmentResultSet.next()){
+                DepartmentData department = new DepartmentData();
+                department.setDepartmentId(departmentResultSet.getInt("id"));
+                department.setDepartmentName(departmentResultSet.getString("department_name"));
+                departmentList.add(department);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();    
+        }
+        System.out.println("==== In getdepartmentList Method End ==== ");
+        return departmentList;
+    }
+
+    public List<ApprovedApplicationsBean> getApprovedApplicationsList(Connection con) {
+
+        String approvedAppsDataQuery = "SELECT tas.*, course.course_name FROM tas, course WHERE tas.course_id=course.id";
+        Statement approvedAppsStatement=null;
+        ResultSet approvedAppsResultSet=null;
+        List<ApprovedApplicationsBean> approvedApplicationsList = new ArrayList<ApprovedApplicationsBean>();
+        System.out.println("==== In getApprovedApplicationsList Method Start==== ");
+        try 
+        {
+            approvedAppsStatement = con.createStatement();
+            approvedAppsResultSet = approvedAppsStatement.executeQuery(approvedAppsDataQuery);
+            while(approvedAppsResultSet.next()){
+                ApprovedApplicationsBean approvedApp = new ApprovedApplicationsBean();
+                approvedApp.setApplicantName(approvedAppsResultSet.getString("name"));
+                approvedApp.setApplicationId(approvedAppsResultSet.getInt("ta_application_id"));
+                approvedApp.setEmail(approvedAppsResultSet.getString("email"));
+                approvedApp.setCourseName(approvedAppsResultSet.getString("course_name"));
+                approvedApp.setCourseId(approvedAppsResultSet.getInt("course_id"));
+                approvedApp.setInstructorId(approvedAppsResultSet.getInt("instructor_id"));
+                approvedApplicationsList.add(approvedApp);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();    
+        }
+        System.out.println("==== In getApplicationsList Method End ==== ");
+        return approvedApplicationsList;
     }
 
 }

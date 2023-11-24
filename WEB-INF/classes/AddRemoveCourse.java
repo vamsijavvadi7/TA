@@ -41,8 +41,8 @@ public class AddRemoveCourse extends HttpServlet{
                     String action = req.getParameter("action");
                     if(action.equals("add")){
                         String courseName = req.getParameter("courseName");
-                        String departmentName = req.getParameter("departmentName");
-                        String instructorName = req.getParameter("instructorName");
+                        int departmentId = Integer.parseInt(req.getParameter("departmentId"));
+                        int instructorId = Integer.parseInt(req.getParameter("instructorId"));
                         boolean status = false;
                         if("on".equals(req.getParameter("status"))){
                             status = true;
@@ -51,37 +51,38 @@ public class AddRemoveCourse extends HttpServlet{
                         }
 
                         String query = "INSERT INTO course (course_name, status, department_id, instructor_id) VALUES(?,?,?,?)";
-                        PreparedStatement addCommitteePS = connObject.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-                        addCommitteePS.setString(1,email);
-                        addCommitteePS.setString(2,password);
-                        addCommitteePS.setString(3,name);
-                        int updatedRows = addCommitteePS.executeUpdate();
+                        PreparedStatement addCoursePS = connObject.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+                        addCoursePS.setString(1,courseName);
+                        addCoursePS.setBoolean(2,status);
+                        addCoursePS.setInt(3,departmentId);
+                        addCoursePS.setInt(4,instructorId);
+                        int updatedRows = addCoursePS.executeUpdate();
                         if(updatedRows==1){
-                            ResultSet generatedKeys = addCommitteePS.getGeneratedKeys();
+                            ResultSet generatedKeys = addCoursePS.getGeneratedKeys();
                             if(generatedKeys.next()){
                                 long insertedId = generatedKeys.getLong(1);
                                 printWriter.print(insertedId);
-                                System.out.println("Successfully added new member!!");
-                                System.out.println("Inserted ID for Committee Member : "+insertedId);
+                                System.out.println("Successfully added new course!");
+                                System.out.println("Inserted ID for course : "+insertedId);
                             } else {
                                 printWriter.print("No Id");
                             }
                         }else{
                             printWriter.print("failed");
-                            System.out.println("Failed to add Committee member!");
+                            System.out.println("Failed to add course !");
                         }
                     } else {
                         System.out.println(req.getParameter("ids"));
                         String ids = req.getParameter("ids");
-                        String query = "DELETE FROM ta_committee WHERE id IN ("+ids+")";
-                        Statement committeeStatement = connObject.createStatement();
-                        int updatedRows = committeeStatement.executeUpdate(query);
+                        String query = "DELETE FROM course WHERE id IN ("+ids+")";
+                        Statement courseStatement = connObject.createStatement();
+                        int updatedRows = courseStatement.executeUpdate(query);
                         if(updatedRows>=1){
                             printWriter.print("success");
-                            System.out.println("successfully removed committee member");
+                            System.out.println("successfully removed course");
                         }else{
                             printWriter.print("failed");
-                            System.out.println("Failed to remove member");
+                            System.out.println("Failed to remove course");
                         }
                     }
                 }
