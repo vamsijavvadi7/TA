@@ -25,11 +25,11 @@ public class Register extends HttpServlet {
                 System.out.println("Captured all details : " + firstname + ", " + lastname + ", " + email + ", "
                         + znumber + ", " + password + ", " + usertype);
                 Statement statement = conObject.createStatement();
-                resultSet = statement.executeQuery("select * from users where usertype='applicant' AND email='" + email
+                resultSet = statement.executeQuery("select * from ta_applicant where email='" + email
                         + "' OR znumber='" + znumber + "';");
                 if (resultSet.next() == false) {
                     System.out.println("User not exists");
-                    int insertedRows = statement.executeUpdate("INSERT INTO users (`firstname`, `lastname`, `znumber`, `email`, `password`, `usertype`) VALUES ('" + firstname + "', '" + lastname + "', '" + znumber + "', '" + email + "', '" + password + "', '" + usertype + "')");
+                    int insertedRows = statement.executeUpdate("INSERT INTO ta_applicant (`firstname`, `lastname`, `znumber`, `email`, `password`) VALUES ('" + firstname + "', '" + lastname + "', '" + znumber + "', '" + email + "', '" + password + "')");
                     System.out.println("User inserted in DB!!");
                     if (insertedRows == 1) {
                         printWriter.print("success");
