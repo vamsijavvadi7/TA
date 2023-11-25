@@ -197,7 +197,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Feedback Form</h2>
-            <form id="feedbackForm">
+            <form id="feedbackForm" method="POST" name="feedbackForm">
                 <div class="mb-3">
                     <label class="form-label" for="technicalSkill">Technical Skills:</label>
                     <input type="number" id="technicalSkill" name="technicalSkill" min="1" max="10"
@@ -241,31 +241,38 @@
 
 <script>
     // Sample TA data (replace with actual data)
-    const taData = [
-        { name: 'TA1', id: 1, },
-        { name: 'TA2', id: 2, },
-        { name: 'TA3', id: 3, }
-    ];
+    // const taData = [
+    //     { name: 'TA1', id: 1, },
+    //     { name: 'TA2', id: 2, },
+    //     { name: 'TA3', id: 3, }
+    // ];
    
-//     var taData = [];
-
-// <c:forEach items="${taList}" var="data" varStatus="loop">
-//     var dataObject = {};
-//     dataObject["id"] = "${data.taId}";
-//     dataObject["name"] = "${data.taName}";
-//     dataObject["instructorId"] = "${data.instructorId}";
-//     dataObject["taApplicantId"] = "${data.taApplicantId}";
-//     dataObject["courseId"] = "${data.courseId}";
-//     dataObject["departmentId"] = "${data.departmentId}";
-//     dataObject["email"] = "${data.email}";
-//     dataObject["taApplicationId"] = "${data.taApplicationId}";
-//     dataObject["offerSent"] = "${data.offerSent}";
-//     dataObject["offerStatus"] = "${data.offerStatus}";
-//     taData.push(dataObject);
+    var taData = [];
+    var course_id=0;
+    var department_id=0;
+    var instructorName='';
+    var instructorId=0;
+<c:forEach items="${taList}" var="data" varStatus="loop">
+    var dataObject = {};
+    dataObject["id"] = "${data.taId}";
+    dataObject["name"] = "${data.taName}";
+    dataObject["instructorId"] = "${data.instructorId}";
+    dataObject["taApplicantId"] = "${data.taApplicantId}";
+    dataObject["courseId"] = "${data.courseId}";
+    dataObject["departmentId"] = "${data.departmentId}";
+    dataObject["email"] = "${data.email}";
+    dataObject["taApplicationId"] = "${data.taApplicationId}";
+    dataObject["offerSent"] = "${data.offerSent}";
+    dataObject["offerStatus"] = "${data.offerStatus}";
+    taData.push(dataObject);
     
-// </c:forEach>s
+</c:forEach>
 
-// console.log(taData);
+ course_id=taData[0].courseId;
+ department_id=taData[0].departmentId;
+instructorId=taData[0].instructorId;
+
+ 
 
 
 
@@ -274,54 +281,55 @@
 
 
 
-    var taReview = [
-        {
-            id: 'ta1',
-            name:'TA1',
-            technicalSkill: 3,
-            communicationSkill: 4,
-            overallFeedback: "hes good he done this job good"
-        }
-    ]
+    // var taReview = [
+    //     {
+    //         id: 'ta1',
+    //         name:'TA1',
+    //         technicalSkill: 3,
+    //         communicationSkill: 4,
+    //         overallFeedback: "hes good he done this job good"
+    //     }
+    // ]
 
 
-//     var taReview = [];
+    var taReview = [];
 
-// <c:forEach items="${taFeedbackList}" var="data">
-//     var dataObject = {};
-//     dataObject["id"] = "${data.taId}";
-//     dataObject["name"] = "${data.taName}";
-//     dataObject["instructorId"] = "${data.instructorId}";
-//     dataObject["taApplicantId"] = "${data.taApplicantId}";
-//     dataObject["courseId"] = "${data.courseId}";
-//     dataObject["departmentId"] = "${data.departmentId}";
-//     dataObject["email"] = "${data.email}";
-//     dataObject["offerSent"] = "${data.offerSent}";
-//     dataObject["offerStatus"] = "${data.offerStatus}";
-//     dataObject["instructorFeedbackId"] = "${data.instructorFeedbackId}";
-//     dataObject["instructorName"] = "${data.instructorName}";
-//     dataObject["performanceRating"] = "${data.performanceRating}";
-//     dataObject["technicalSkill"] = "${data.technicalSkill}";
-//     dataObject["communicationSkill"] = "${data.communicationSkill}";
-//     dataObject["overallFeedback"] = "${data.overallFeedback}";
-//     taReview.push(dataObject);
-// </c:forEach>
+    var instructorName = '<%=request.getAttribute("instructorName")%>';
+console.log(instructorName);
+<c:forEach items="${taFeedbackList}" var="data">
+    var dataObject = {};
+    dataObject["id"] = "${data.taId}";
+    dataObject["name"] = "${data.taName}";
+    dataObject["instructorId"] = "${data.instructorId}";
+    dataObject["taApplicantId"] = "${data.taApplicantId}";
+    dataObject["courseId"] = "${data.courseId}";
+    dataObject["departmentId"] = "${data.departmentId}";
+    dataObject["email"] = "${data.email}";
+    dataObject["offerSent"] = "${data.offerSent}";
+    dataObject["offerStatus"] = "${data.offerStatus}";
+    dataObject["instructorFeedbackId"] = "${data.instructorFeedbackId}";
+    dataObject["instructorName"] = "${data.instructorName}";
+    dataObject["performanceRating"] = "${data.performanceRating}";
+    dataObject["technicalSkill"] = "${data.technicalSkill}";
+    dataObject["communicationSkill"] = "${data.communicationSkill}";
+    dataObject["overallFeedback"] = "${data.overallFeedback}";
+    taReview.push(dataObject);
+</c:forEach>
 
-// console.log(taReview);
 
 
     // Function to create TA list items
   
 function createTAList() {
-    const taListContainer = document.getElementById('taList');
+    var taListContainer = document.getElementById('taList');
     taListContainer.innerHTML = ''; // Clear existing list before appending new items
 
     taData.forEach(ta => {
-        const listItem = document.createElement('li');
+        var listItem = document.createElement('li');
         listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
         listItem.innerHTML = `
-            <span>${ta.name}</span>
-            <button class="review-btn btn btn-secondary" data-ta-id="${ta.id}">Review Now</button>
+            <span>`+ta.name+`</span>
+            <button class="review-btn btn btn-secondary" data-ta-id="`+ta.id+`">Review Now</button>
         `;
         taListContainer.appendChild(listItem);
     });
@@ -329,17 +337,17 @@ function createTAList() {
 
     // Function to check if TA review is already submitted
     function checkIfReviewSubmitted(taId) {
-        const submittedReview = taReview.find(review => review.id === taId);
+        var submittedReview = taReview.find(review => review.id === taId);
         return submittedReview;
     }
 
 
-    function displayFeedbackDetails(taId, submissionDetails) {
+    function displayFeedbackDetails(taName, submissionDetails) {
         const feedbackDetailsModal = document.getElementById('feedbackDetailsModal');
         const feedbackDetailsContent = document.getElementById('feedbackDetailsContent');
         feedbackDetailsContent.innerHTML = `
-            <p>Feedback already submitted for ${taId}:</p>
-            <p>${submissionDetails}</p>
+            <p>Feedback already submitted for `+taName+`:</p>
+            <p>`+submissionDetails+`</p>
         `;
         feedbackDetailsModal.style.display = 'block';
 
@@ -367,10 +375,11 @@ function createTAList() {
         
         if (submittedReview) {
             // Display submitted details in the feedback details modal
-            const submissionDetails = `Technical Skills: ${submittedReview.technicalSkill}<br>
-             Communication Skills: ${submittedReview.communicationSkill}<br>
-             Overall Feedback: ${submittedReview.overallFeedback}`;
-            displayFeedbackDetails(taId, submissionDetails);
+            const submissionDetails = `Technical Skills: `+submittedReview.technicalSkill+`/10 <br>
+             Communication Skills: `+submittedReview.communicationSkill+`/10 <br>
+             Overall Feedback: `+submittedReview.overallFeedback+`/10 <br>
+             Performance Rating: `+submittedReview.performanceRating+`/10`;
+            displayFeedbackDetails(submittedReview.name, submissionDetails);
         }else {
                 // Display feedback form
                 modal.style.display = 'block';
@@ -382,14 +391,58 @@ function createTAList() {
                     const technicalSkill = document.getElementById('technicalSkill').value;
                     const communicationSkill = document.getElementById('communicationSkill').value;
                     const overallFeedback = document.getElementById('overallFeedback').value;
-
+                    const performanceRating = document.getElementById('performanceRating').value;
                     // Add submission to taReview list
                     taReview.push({
                         id: taId,
                         technicalSkill,
                         communicationSkill,
-                        overallFeedback
+                        overallFeedback,
+                        performanceRating
+
                     });
+
+
+
+
+                    $(".form-submit").click(()=>{
+            
+
+                console.log(technicalSkill, communicationSkill, performanceRating,overallFeedback);
+
+                if(technicalSkill !=="" && communicationSkill!=="" && performanceRating!=="" && overallFeedback==""){
+                    $.ajax({
+                        type: "POST",
+                        url: "addInstructorFeedback",
+                        data:{
+                            technicalSkill:technicalSkill,
+                            communicationSkill:communicationSkill,
+                            performanceRating:performanceRating,
+                            overallFeedback:overallFeedback,
+                            course_id:course_id,
+                            department_id:department_id,
+                            instructorId:instructorId,
+                            instructorName:instructorName,
+                            taId:taId
+                            },
+                        success: function (result) {
+                            if (result =="success") {
+                                console.log("Success");
+                                alert("feedbackForm submitted")
+                                
+                            }else{
+
+                                alert(result+ " Not submitted!!");
+                            }
+                        },
+                        error: function (err) {
+                            alert("ERROR: ", err);
+                        }
+                    });
+                }
+            });
+
+
 
                     // Close the modal after submission
                     modal.style.display = 'none';
@@ -412,7 +465,6 @@ function createTAList() {
         }
     });
 
-  
 
     // Create TA list on page load
     document.addEventListener('DOMContentLoaded', createTAList);

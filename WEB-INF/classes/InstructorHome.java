@@ -15,6 +15,7 @@ public class InstructorHome extends HttpServlet{
 		    PrintWriter printWriter = res.getWriter();
             Cookie[] cookies = req.getCookies();
             if (connObject != null) {
+
 			    res.setContentType("text/html");
 			    String username="", usertype="";
     
@@ -31,8 +32,9 @@ public class InstructorHome extends HttpServlet{
                     Statement userStatement = connObject.createStatement();
 			        ResultSet userResultSet = userStatement.executeQuery("SELECT * FROM instructor WHERE email='" + username + "'");
                     if(userResultSet.next()){
-                        req.setAttribute("taFeedbackList", getTaFeedbackList(connObject));
-                         req.setAttribute("taList", getTasList(connObject));
+                        req.setAttribute("taFeedbackList", getTaFeedbackList(connObject,username));
+                         req.setAttribute("taList", getTasList(connObject,username));
+                         req.setAttribute("instructorName",userResultSet.getString("firstname")+" "+userResultSet.getString("lastname"));
                         req.getRequestDispatcher("/instructorHome.jsp").forward(req, res);
                     } else{
                         req.getRequestDispatcher("/login.jsp").forward(req, res);
@@ -54,17 +56,33 @@ public class InstructorHome extends HttpServlet{
 
     }
 
-    public List<TaFeedbackData> getTaFeedbackList(Connection con) {
+    public List<TaFeedbackData> getTaFeedbackList(Connection con,String username) {
 
-                   String taDataQuery = "SELECT tas.id as ta_id, tas.name as ta_name, " +
-                     "tas.instructor_id, tas.ta_applicant_id, " +
-                     "tas.course_id, tas.department_id, tas.email, " +
-                     "tas.offer_sent, tas.offer_status, Instruc_f.id as instructor_feedback_id, " +
-                     "Instruc_f.instructor_name, Instruc_f.performance_rating, " +
-                     "Instruc_f.technical_skill, Instruc_f.communication_skill, " +
-                     "Instruc_f.overall_feedback " +
-                     "FROM tas, instructor_feedback as Instruc_f " +
-                     "WHERE tas.id = Instruc_f.TA_id";
+                  String taDataQuery = "SELECT " +
+    "tas.id AS ta_id, " +
+    "tas.name AS ta_name, " +
+    "tas.instructor_id, " +
+    "tas.ta_applicant_id, " +
+    "tas.course_id, " +
+    "tas.department_id, " +
+    "tas.email, " +
+    "tas.offer_sent, " +
+    "tas.offer_status, " +
+    "Instruc_f.id AS instructor_feedback_id, " +
+    "Instruc_f.instructor_name, " +
+    "Instruc_f.performance_rating, " +
+    "Instruc_f.technical_skill, " +
+    "Instruc_f.communication_skill, " +
+    "Instruc_f.overall_feedback " +
+"FROM " +
+    "tas, " +
+    "instructor_feedback AS Instruc_f, " +
+    "instructor AS inst " +
+"WHERE " +
+    "inst.email ='"+username+"' AND " +
+    "tas.id = Instruc_f.TA_id AND " +
+    "inst.id = tas.instructor_id";
+
 
 
 
@@ -111,13 +129,15 @@ public class InstructorHome extends HttpServlet{
 
 
 
-    public List<TaData> getTasList(Connection con) {
+    public List<TaData> getTasList(Connection con,String username) {
 
-                   String taDataQuery = "SELECT tas.id as ta_id, tas.name as ta_name, " +
-                     "tas.instructor_id, tas.ta_applicant_id, " +
-                     "tas.course_id, tas.department_id, tas.email, " +
-                     "tas.ta_application_id,tas.offer_sent, tas.offer_status " +
-                     "FROM tas";
+              String taDataQuery = "SELECT tas.id as ta_id, tas.name as ta_name, " +
+                                  "tas.instructor_id, tas.ta_applicant_id, " +
+                                   "tas.course_id, tas.department_id, tas.email, " +
+                                  "tas.ta_application_id, tas.offer_sent, tas.offer_status " +
+                                  "FROM tas, instructor as inst " +
+"WHERE inst.email = '" +username+
+    "' AND inst.id = tas.instructor_id";
 
 
 
@@ -136,6 +156,7 @@ public class InstructorHome extends HttpServlet{
             taResultSet = taStatement.executeQuery(taDataQuery);
 
             while(taResultSet.next()){
+
                 TaData ta = new TaData();
         ta.setTaId(taResultSet.getInt("ta_id"));
         ta.setTaName(taResultSet.getString("ta_name"));
