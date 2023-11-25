@@ -85,12 +85,8 @@
                       type="password" id="confirmpassword" />
                   </div>
                   <br>
-                  <br>
-                  <p style="color:white;font-size: small;">
-                      NOTE: Please select appropriate user type in the above dropdown
-                  </p>
                   <div>
-                      <a href="#login" id="loginLink" style="color:white;">Already have an account? Login here</a>
+                      <a href="#login" id="loginLink" style="color:white;"><b>Already have an account? Login here</b></a>
                   </div>
                   <br>
                   <button type="submit" name="registerBtn" class="btn btn-primary registerBtn" id="registerBtn"
