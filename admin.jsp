@@ -1083,7 +1083,7 @@
                     "<p><strong>Overall Feedback </strong> " + applicationData.instructorOverallFeedback + "</p>";
                 }
                 var detailsHtml = ""+
-                    "<p><strong>Application Id </strong> <span id='appId'>" + applicationData.applicationId + "# </span></p>" +
+                    "<p><strong>Application Id </strong> <span id='appId'>" + applicationData.applicationId + "</span></p>" +
                     "<p><strong>Applicant Name </strong> <span id='applicationcontentdetailsname'>" + applicationData.name + "</span></p>" +
                     "<p><strong>Email </strong> " + applicationData.email + "</p>" +
                     "<p><strong>Z Number </strong> " + applicationData.znumber + "</p>" +
