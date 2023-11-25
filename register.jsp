@@ -62,7 +62,7 @@
         </nav>
         <div class="container">
             <div class="jumbotron" style="background-color: #a087c4;">
-                <form name="register" id="registerform" method="get">
+                <form name="register" id="registerForm" method="get">
                   <div class="form-group">
                     <input class="form-control" placeholder="Enter your firstname" required="true" name="firstname" type="text"
                       id="firstname" />
@@ -108,14 +108,13 @@
                 window.location.href = "login.jsp";
             });
         });
-        $("#registerLink").click(function () {
-            window.location.href = "register.jsp";
-        })
         $(".registerBtn").click(function () {
             var email = document.register.email.value;
             var atposition = email.indexOf("@");
             var dotposition = email.lastIndexOf(".");
-            if (document.register.password.value.length < 1) {
+            var znumber = $("#znumber").val();
+            console.log(znumber);
+            if (document.register.password.value.length < 8) {
               alert("Password should contain atleast 8 characters");
             }
             else if (atposition < 1 || dotposition < atposition + 2 || dotposition + 2 >= email.length) {
@@ -123,6 +122,8 @@
             }
             else if ($("#password").val() != $("#confirmpassword").val()) {
               alert("Password and confirm password didn't match!!");
+            }else if(znumber.length!=10){
+              alert("Znumber length should be 10 digits!");
             }
             else {
               $.ajax({
