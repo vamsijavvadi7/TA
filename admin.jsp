@@ -142,7 +142,8 @@
                 border:white 0px solid !important;
             }
             table{
-                width:75% !important;
+                width:95% !important;
+                border-radius:10px;
             }
             thead{
                 position:sticky;
@@ -269,19 +270,19 @@
                 <h2 class="text-center">TA Applications</h2>
                 <center>
                     <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                    <table class="table table-striped" id="applicationsTable">
-                        <thead>
-                            <tr>
-                                <th>Application Id</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Course Name</th>
-                                <th>Status</th>
-                                <th><i class="filter-icon fas fa-filter third-column" id="filterIcon"></i></th>
-                            </tr>
-                        </thead>
-                        <tbody id="taApplicationsListTableBody"></tbody>
-                    </table>
+                        <table class="table table-striped" id="applicationsTable">
+                            <thead>
+                                <tr>
+                                    <th>Application Id</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Course Name</th>
+                                    <th>Status</th>
+                                    <th><i class="filter-icon fas fa-filter third-column" id="filterIcon"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody id="taApplicationsListTableBody"></tbody>
+                        </table>
                     </div>
                 </center>
                 <div class="filter-dropdown-div" id="filterDropdown">
@@ -648,6 +649,7 @@
                 application["recommended"]="${app.recommended}";
                 taApplicationsList.push(application);
             </c:forEach>
+            console.log(taApplicationsList);
 
             var approvedTAsList = [];
             <c:forEach items="${approvedApplicationsList}" var="app">
@@ -1071,7 +1073,7 @@
             function renderApplicationDetails(applicationData) {
                 var modalContent = $("#applicationDetailsContent");
                 modalContent.empty();
-                var cvExtension = application.cv.split('.').pop();
+                var cvExtension = applicationData.cv.split('.').pop();
                 var feedbackHtml = "";
                 if(applicationData.instructorFeedbackExists){
                     feedbackHtml = "<h5 class='lineInmiddleH2'><span class='h2Span'>INSTRUCTOR FEEDBACK</span></h5>"+

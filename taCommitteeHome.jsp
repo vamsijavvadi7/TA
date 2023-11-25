@@ -140,7 +140,6 @@
 
             .filter-icon {
                 cursor: pointer;
-                /* position: fixed; */
                 top: 20px;
                 font-size: 1.5em;
                 z-index: 1000;
@@ -164,7 +163,7 @@
             }
             .my-custom-scrollbar {
                 position: relative;
-                /* height: 60%; */
+                height: 60%;
                 overflow: auto;
             }
             .table-wrapper-scroll-y {
@@ -256,7 +255,7 @@
             <div class="jumbotron" id="jumbotronBox">
                 <h2 class="text-center">TA Applications</h2>
                 <center>
-                    <div class="table-wrapper-scroll-y my-custom-scrollbar"></div>
+                    <div class="table-wrapper-scroll-y my-custom-scrollbar">
                         <table class="table table-striped" id="applicationsTable">
                             <thead>
                                 <tr>
