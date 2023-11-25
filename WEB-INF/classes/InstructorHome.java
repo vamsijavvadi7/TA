@@ -33,7 +33,7 @@ public class InstructorHome extends HttpServlet{
                     if(userResultSet.next()){
                         req.setAttribute("taFeedbackList", getTaFeedbackList(connObject));
                          req.setAttribute("taList", getTasList(connObject));
-                        req.getRequestDispatcher("/InstructorHome.jsp").forward(req, res);
+                        req.getRequestDispatcher("/instructorHome.jsp").forward(req, res);
                     } else{
                         req.getRequestDispatcher("/login.jsp").forward(req, res);
                     }

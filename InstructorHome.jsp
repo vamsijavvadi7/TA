@@ -8,9 +8,7 @@
     <title>Instructor Dashboard</title>
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-        crossorigin="anonymous">
+   
 
     <style>
         /* Global styles */
@@ -189,6 +187,7 @@
     <div class="container">
         <h1>List of TAs</h1>
         <ul id="taList">
+           
             <!-- TA list items will be dynamically added here -->
         </ul>
     </div>
@@ -207,6 +206,11 @@
                 <div class="mb-3">
                     <label class="form-label" for="communicationSkill">Communication Skills:</label>
                     <input type="number" id="communicationSkill" name="communicationSkill" min="1" max="10"
+                        class="form-input" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="performanceRating">Performance Rating:</label>
+                    <input type="number" id="performanceRating" name="performanceRating" min="1" max="10"
                         class="form-input" required>
                 </div>
                 <div class="mb-3">
@@ -231,19 +235,44 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6veqcxwo//CmI5Hz4MATkQD5tFkFV8fkd" crossorigin="anonymous">
-    </script>
+  
 
     <!-- Your previous HTML and CSS styles remain unchanged -->
 
 <script>
     // Sample TA data (replace with actual data)
     const taData = [
-        { name: 'TA1', id: 'ta1' },
-        { name: 'TA2', id: 'ta2' },
-        { name: 'TA3', id: 'ta3' }
+        { name: 'TA1', id: 1, },
+        { name: 'TA2', id: 2, },
+        { name: 'TA3', id: 3, }
     ];
+   
+//     var taData = [];
+
+// <c:forEach items="${taList}" var="data" varStatus="loop">
+//     var dataObject = {};
+//     dataObject["id"] = "${data.taId}";
+//     dataObject["name"] = "${data.taName}";
+//     dataObject["instructorId"] = "${data.instructorId}";
+//     dataObject["taApplicantId"] = "${data.taApplicantId}";
+//     dataObject["courseId"] = "${data.courseId}";
+//     dataObject["departmentId"] = "${data.departmentId}";
+//     dataObject["email"] = "${data.email}";
+//     dataObject["taApplicationId"] = "${data.taApplicationId}";
+//     dataObject["offerSent"] = "${data.offerSent}";
+//     dataObject["offerStatus"] = "${data.offerStatus}";
+//     taData.push(dataObject);
+    
+// </c:forEach>s
+
+// console.log(taData);
+
+
+
+                  
+                    
+
+
 
     var taReview = [
         {
@@ -255,19 +284,48 @@
         }
     ]
 
+
+//     var taReview = [];
+
+// <c:forEach items="${taFeedbackList}" var="data">
+//     var dataObject = {};
+//     dataObject["id"] = "${data.taId}";
+//     dataObject["name"] = "${data.taName}";
+//     dataObject["instructorId"] = "${data.instructorId}";
+//     dataObject["taApplicantId"] = "${data.taApplicantId}";
+//     dataObject["courseId"] = "${data.courseId}";
+//     dataObject["departmentId"] = "${data.departmentId}";
+//     dataObject["email"] = "${data.email}";
+//     dataObject["offerSent"] = "${data.offerSent}";
+//     dataObject["offerStatus"] = "${data.offerStatus}";
+//     dataObject["instructorFeedbackId"] = "${data.instructorFeedbackId}";
+//     dataObject["instructorName"] = "${data.instructorName}";
+//     dataObject["performanceRating"] = "${data.performanceRating}";
+//     dataObject["technicalSkill"] = "${data.technicalSkill}";
+//     dataObject["communicationSkill"] = "${data.communicationSkill}";
+//     dataObject["overallFeedback"] = "${data.overallFeedback}";
+//     taReview.push(dataObject);
+// </c:forEach>
+
+// console.log(taReview);
+
+
     // Function to create TA list items
-    function createTAList() {
-        const taList = document.getElementById('taList');
-        taData.forEach(ta => {
-            const listItem = document.createElement('li');
-            listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-            listItem.innerHTML = `
-                <span>${ta.name}</span>
-                <button class="review-btn btn btn-secondary" data-ta-id="${ta.id}">Review Now</button>
-            `;
-            taList.appendChild(listItem);
-        });
-    }
+  
+function createTAList() {
+    const taListContainer = document.getElementById('taList');
+    taListContainer.innerHTML = ''; // Clear existing list before appending new items
+
+    taData.forEach(ta => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+        listItem.innerHTML = `
+            <span>${ta.name}</span>
+            <button class="review-btn btn btn-secondary" data-ta-id="${ta.id}">Review Now</button>
+        `;
+        taListContainer.appendChild(listItem);
+    });
+}
 
     // Function to check if TA review is already submitted
     function checkIfReviewSubmitted(taId) {
