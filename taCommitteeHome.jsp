@@ -548,7 +548,7 @@
                     "<p><strong>Overall Feedback </strong> " + applicationData.instructorOverallFeedback + "</p>";
                 }
                 var detailsHtml = ""+
-                    "<p><strong>Application Id </strong> <span id='appId'>" + applicationData.applicationId + "# </span></p>" +
+                    "<p><strong>Application Id </strong> <span id='appId'>" + applicationData.applicationId + "</span></p>" +
                     "<p><strong>Applicant Name </strong> <span id='applicationcontentdetailsname'>" + applicationData.name + "</span></p>" +
                     "<p><strong>Email </strong> " + applicationData.email + "</p>" +
                     "<p><strong>Z Number </strong> " + applicationData.znumber + "</p>" +
@@ -592,19 +592,21 @@
 
             $(document).on("click", ".updateStatusBtn", function () {
                 var status = $(this).data("application");
+                var buttonValue = $("#statusValue").html();
                 var applicationData = {
                     applicationId: $("#appId").text()
                 };
-                if(status!=$("#statusValue")){
-                    updateApplicationStatus(applicationData.applicationId, status);
+                console.log(applicationData);
+                if(status==buttonValue){
+                    alert("Application already " + status);
                 }else{
-                    alert("Application already "+status);
+                    updateApplicationStatus(applicationData.applicationId, status);
                 }
             });
 
             function updateApplicationStatus(applicationId, applicationStatus) {
                 var application = taApplicationsList.find(function (app) {
-                    return app.applicationId === applicationId ;
+                    return app.applicationId == applicationId ;
                 });
                 if (!!application) {
                     $.ajax({
@@ -621,7 +623,6 @@
                                 $("#updateMsg").html("Application status updated successfully! <span style='color:green'> &#10004 </span>");
                                 renderApplicationDetails(application);
                                 renderTable();
-                                // loadApprovedTAsTable(taApplicationsList);
                                 sleep(3000).then(()=>{
                                     $("#updateMsg").empty();
                                     $("#applicationDetailsModal").modal("hide");
@@ -635,7 +636,7 @@
                         }
                     });
                 }else{
-                    alert("Application status is already "+applicationStatus);
+                    alert("ApplicationId '"+applicationId+"' not found!");
                 }
             }
 
