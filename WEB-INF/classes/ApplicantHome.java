@@ -17,7 +17,7 @@ public class ApplicantHome extends HttpServlet{
 			    res.setContentType("text/html");
 			    String username="", usertype="";
     
-                for(int i=0; i < cookies.length; i++) {
+                for(int i=0; cookies!=null && i < cookies.length; i++) {
                       if("TAusername".equals(cookies[i].getName())) {
                           username = cookies[i].getValue();
                       }
@@ -25,20 +25,26 @@ public class ApplicantHome extends HttpServlet{
                           usertype = cookies[i].getValue();
                       }
                 }
-
-			    Statement statement = connObject.createStatement();
-			    ResultSet userResultSet = statement.executeQuery("SELECT * FROM ta_applicant WHERE znumber='"+ username +"' OR email='" + username + "'");
-                userResultSet.next();
-                req.setAttribute("firstname", userResultSet.getString("firstname"));
-                req.setAttribute("lastname", userResultSet.getString("lastname"));
-                req.setAttribute("znumber", userResultSet.getString("znumber"));
-                req.setAttribute("email", userResultSet.getString("email"));
-                req.setAttribute("password",userResultSet.getString("password"));
-                req.setAttribute("username", username);
-                req.setAttribute("departmentList", getDepartmentList(connObject));  
-                req.setAttribute("courseList", getCourseList(connObject));
-                req.getRequestDispatcher("/applicantHome.jsp").forward(req, res);
-			
+                if(!username.equals("") && username!=null && !username.equals(" ")){
+			        Statement statement = connObject.createStatement();
+			        ResultSet userResultSet = statement.executeQuery("SELECT * FROM ta_applicant WHERE znumber='"+ username +"' OR email='" + username + "'");
+                    if(userResultSet.next()){
+                        req.setAttribute("firstname", userResultSet.getString("firstname"));
+                        req.setAttribute("lastname", userResultSet.getString("lastname"));
+                        req.setAttribute("znumber", userResultSet.getString("znumber"));
+                        req.setAttribute("email", userResultSet.getString("email"));
+                        req.setAttribute("password",userResultSet.getString("password"));
+                        req.setAttribute("username", username);
+                        req.setAttribute("departmentList", getDepartmentList(connObject));
+                        req.setAttribute("courseList", getCourseList(connObject));
+                        req.setAttribute("applicationsList", getApplicationStatus(connObject,userResultSet.getInt("id")));
+                        req.getRequestDispatcher("/applicantHome.jsp").forward(req, res);
+                    }else{
+                        req.getRequestDispatcher("/login.jsp").forward(req, res);
+                    }
+                }else{
+                    req.getRequestDispatcher("/login.jsp").forward(req, res);
+                }
             } else {
                 printWriter.print("Not connected to the database!");
             }
@@ -109,6 +115,49 @@ public class ApplicantHome extends HttpServlet{
     
     	System.out.println("In ApplicantHome getCourseList END::");
         return CourseList;
+    }
+
+    public List<ApplicationStatusBean> getApplicationStatus(Connection connObject, int applicantId){
+        String sqlQuery = "SELECT app.*, department.department_name, course.course_name, tas.offer_status, "+
+        "instructor.firstname as instructorFirstname, instructor.lastname as instructorLastname "+
+        "FROM ta_application as app, department, course, instructor, tas WHERE app.ta_applicant_id='" + applicantId +
+        "' AND app.course_id=course.id AND app.department_id=department.id AND app.instructor_id=instructor.id "+
+        "AND app.id=tas.ta_application_id";
+        Statement applicationStatement=null;
+        ResultSet applicationsResultSet=null;
+        List<ApplicationStatusBean>  applicationsList = new ArrayList<ApplicationStatusBean>();
+        try{
+            applicationStatement = connObject.createStatement();
+            applicationsResultSet = applicationStatement.executeQuery(sqlQuery);
+            while(applicationsResultSet.next()){
+                boolean offerSet = false;
+                System.out.println("Application Id: "+applicationsResultSet.getInt("id"));
+                if(applicationsResultSet.getString("status").equals("Approved")){
+                    Statement tasStatement = connObject.createStatement();
+                    ResultSet tasResultSet = tasStatement.executeQuery("SELECT * FROM tas WHERE ta_application_id='"+applicationsResultSet.getInt("id")+"'");
+                    if(tasResultSet.next()){
+                        offerSet = tasResultSet.getBoolean("offer_sent");
+                    }else{
+                        offerSet = false;
+                    }
+                }else{
+                    offerSet = false;
+                }
+                ApplicationStatusBean app = new ApplicationStatusBean();
+                app.setId(applicationsResultSet.getInt("id"));
+                app.setDepartmentName(applicationsResultSet.getString("department_name"));
+                app.setCourseName(applicationsResultSet.getString("course_name"));
+                app.setInstructorName(applicationsResultSet.getString("instructorFirstname")+" "+applicationsResultSet.getString("instructorLastname"));
+                app.setStatus(applicationsResultSet.getString("status"));
+                app.setOfferStatus(applicationsResultSet.getString("offer_status"));
+                app.setOffered(offerSet);
+                applicationsList.add(app);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();    
+        }
+        System.out.println("==== In getApplicationsStatus Method End ==== ");
+        return applicationsList;
     }
 
 }

@@ -44,7 +44,7 @@ public class AddRemoveCommittee extends HttpServlet{
                         String email = req.getParameter("email");
                         String password = req.getParameter("password");
 
-                        String query = "INSERT INTO ta_committee (email, password, first_name) VALUES(?,?,?)";
+                        String query = "INSERT INTO ta_committee (email, password, firstname) VALUES(?,?,?)";
                         PreparedStatement addCommitteePS = connObject.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
                         addCommitteePS.setString(1,email);
                         addCommitteePS.setString(2,password);
