@@ -48,7 +48,7 @@ public class ApplicationForm extends HttpServlet{
                 /** Declaring the variables */
 			    String presentDepartment, cgpaString, uploadPath, targetPath, firstname, lastname, email, znumber, educationLevel, cvfileName, expCourse="none";
                 float cgpa;
-                int applicantId, courseId, departmentId, InstructorId, expDuration=0;
+                int applicantId, courseId, departmentId, instructorId, expDuration=0;
                 boolean previousExperienceExists;
                 java.sql.Date gradDate;
                 InputStream cvInputStream;
@@ -109,7 +109,7 @@ public class ApplicationForm extends HttpServlet{
                     /** Printing the above values for reference */
                     System.out.println("cgpa : "+cgpa+", presentDepartment: "+presentDepartment+", educationLevel: "+educationLevel+", gradDate: "+gradDate);
                     System.out.println("previousExperienceExists : "+previousExperienceExists+", expCourse: "+expCourse+", expDuration: "+expDuration);
-                    System.out.println("cvfileName : "+cvfileName);
+                    System.out.println("instructorId : "+instructorId);
 
                     try (InputStream cvFileContent = cv.getInputStream()) {
                         Files.copy(cvFileContent, Paths.get(targetPath), StandardCopyOption.REPLACE_EXISTING);
