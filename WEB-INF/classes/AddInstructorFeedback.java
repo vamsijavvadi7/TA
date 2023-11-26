@@ -10,7 +10,7 @@ public class AddInstructorFeedback extends HttpServlet{
   throws ServletException,IOException {
 	  
 	  try 
-	  {
+	   {
 		  Class.forName("com.mysql.jdbc.Driver");
 		  Connection connObject = DriverManager.getConnection("jdbc:mysql://10.0.0.224:3306/ta", "ta", "root");
 			PrintWriter printWriter = res.getWriter();
@@ -22,7 +22,7 @@ public class AddInstructorFeedback extends HttpServlet{
                 String username="", usertype="";
                 for(int i=0; i < cookies.length; i++) {
                       if("TAusername".equals(cookies[i].getName())) {
-                          username = cookies[i].getValue();+
+                          username = cookies[i].getValue();
                       }
                       else if("TAusertype".equals(cookies[i].getName())) {
                           usertype = cookies[i].getValue();
@@ -35,7 +35,7 @@ public class AddInstructorFeedback extends HttpServlet{
                 } else if(usertype.equals("committee")) {
                     req.getRequestDispatcher("/committeeHome.jsp").forward(req, res);
                 } else if(usertype.equals("admin")) {
-                    req.getRequestDispatcher("/AdminHome.jsp").forward(req, res);
+                    req.getRequestDispatcher("/adminHome.jsp").forward(req, res);
                 } else {
 
                  
@@ -74,14 +74,12 @@ public class AddInstructorFeedback extends HttpServlet{
                             System.out.println("Failed to add Committee member!");
                         }
                     } 
-                }
-				
-            } else {
+                }else {
                 printWriter.print("Not connected to the database!");
-            }
+        
 
-        } 
-		catch (SQLException e) {
+        }
+        } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
