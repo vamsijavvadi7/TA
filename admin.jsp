@@ -217,6 +217,12 @@
             .container{
                 margin-top:2%;
             }
+            #updateStatusMsg{
+                margin-left:18%;
+            }
+            .form-control{
+                text-align:center;
+            }
         </style>
     </head>
     <body>
@@ -317,35 +323,36 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="profileModalLabel">Profile</h5>
+                        <span id="updateStatusMsg"></span>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <!-- Profile form with editable fields -->
-                        <form id="profileForm">
-                            <div class="form-group">
-                                <label for="name">Name:</label>
-                                <input type="text" class="form-control" id="name" placeholder="Enter your name">
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email:</label>
-                                <input type="email" class="form-control" id="email" placeholder="Enter your email">
-                            </div>
-                            <div class="form-group">
-                                <label for="znumber">Z Number:</label>
-                                <input type="text" class="form-control" id="znumber" placeholder="Enter your Z Number">
-                            </div>
-                            <div class="form-group">
-                                <label for="address">Address:</label>
-                                <textarea class="form-control" id="address" rows="3"
-                                    placeholder="Enter your address"></textarea>
-                            </div>
-                        </form>
+                        <center>
+                            <form id="profileForm">
+                                <div class="form-group">
+                                    <label for="name" id-="firstnameLabel">${firstname}</label>
+                                    <input type="text" class="form-control" id="firstname" placeholder="Update your firstname">
+                                </div>
+                                <div class="form-group">
+                                    <label for="name" id-="lastnameLabel">${lastname}</label>
+                                    <input type="text" class="form-control" id="lastname" placeholder="Update your lastname">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email" id="emailLabel">${email}</label>
+                                    <input type="email" class="form-control" id="email" placeholder="Update your email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="znumber" id="passwordLabel">${password}</label>
+                                    <input type="text" class="form-control" id="password" placeholder="Update your password">
+                                </div>
+                            </form>
+                        </center>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="saveProfile">Save</button>
+                        <button type="button" class="btn btn-primary" id="updateProfile">Save</button>
                     </div>
                 </div>
             </div>
@@ -693,7 +700,7 @@
                             selectedRows.forEach((row)=>{
                                 row.remove();
                             });
-                            // loadInstructorTable(instructorsList);
+                            alert("Removed successfully!");
                         }else{
                             alert(result+ " Not Removed!!");
                         }
@@ -727,7 +734,7 @@
                             rows.forEach((row)=>{
                                 row.remove();
                             });
-                            // loadCommitteeTable(committeeList);
+                            alert("Removed successfully!");
                         }else{
                             alert(result+ " Not Removed!!");
                         }
@@ -740,13 +747,36 @@
 
             $("#removeCourseBtn").click(function(){
                 var selectedCourses=[];
-                $('.cCheckbox:checked').each(function() {
+                var rows = [];
+                $('.courseCheckbox:checked').each(function() {
                     var row = $(this).closest('tr');
-                    selectedCourses.push(row.find('th').text());
-                    row.remove();
+                    selectedCourses.push(row.find('td:eq(0)').text());
+                    rows.push(row);
                 });
 
-                console.log(selectedCourses);
+                console.log("Selected Courses: ", selectedCourses);
+                var selectedCourseIdsString = selectedCourses.join();
+                $.ajax({
+                    type: "POST",
+                    url: "addRemoveCourse",
+                    data:{
+                            ids:selectedCourseIdsString,
+                            action:"remove"
+                        },
+                    success: function (result) {
+                        if (result == "success") {
+                            alert("Course removed succesfully!");
+                            rows.forEach((row)=>{
+                                row.remove();
+                            });
+                        }else{
+                            alert(result+ ", Course not removed!");
+                        }
+                    },
+                    error: function (err) {
+                        alert("ERROR: ", err);
+                    }
+                });
             });
 
             $("#manageUsers").click(function () {
@@ -840,15 +870,13 @@
                 var email = $("#instructorEmail").val();
                 var password = $("#instructorPassword").val();
                 var courseId = $("#instructorCourseDropdown").val();
-                console.log(courseId);
-                var course = courseList.find((course)=>{ if(course.id == courseId){ return course; }});
-                console.log(course);
-                var courseName = course.courseName;
-                var departmentId = course.departmentId;
-                var department = departmentList.find((dept)=>{ return dept.departmentId==departmentId });
-                var departmentName = department.departmentName;
+                console.log("courseId: ", courseId);
+                console.log("", course);
+                var courseName = null;
+                var departmentId = null;
+                var departmentName = null;
 
-                if(name !=="" && email!=="" && password!=="" && course!==""){
+                if(name !=="" && email!=="" && password!==""){
                     $.ajax({
                         type: "POST",
                         url: "addRemoveInstructor",
@@ -856,9 +884,6 @@
                                 name:name,
                                 email:email,
                                 password:password,
-                                courseId:courseId,
-                                courseName:courseName,
-                                departmentId:departmentId,
                                 action:"add",
                             },
                         success: function (result) {
@@ -870,7 +895,9 @@
                                 instructor["courseName"]=courseName;
                                 instructor["instructorName"]=name;
                                 instructor["email"]=email;
+                                console.log("Instructor object after creation : ", instructor);
                                 instructorsList.push(instructor);
+                                alert("Instructor added successfully!");
                                 loadInstructorTable(instructorsList);
                                 
                             }else{
@@ -908,6 +935,7 @@
                                 committee["name"]=name;
                                 committee["email"]=email;
                                 committeeList.push(committee);
+                                alert("Committee added successfully!");
                                 loadCommitteeTable(committeeList);
                                 
                             }else{
@@ -927,6 +955,7 @@
                 var status = $("input[name='status']:checked").val();
                 var instructorId = $("#instructorIdCourse").val();
                 var departmentOject = departmentList.find((dept)=>{ return dept.departmentId==departmentId });
+                console.log("Instructor List: ",instructorsList);
                 var instructorOject = instructorsList.find((instructor)=>{ return instructor.id==instructorId });
 
                 if(courseName !=="" && departmentId!=="" && status!=="" && instructorId!==""){
@@ -941,8 +970,7 @@
                                 action:"add"
                             },
                         success: function (result) {
-                            if (result != "No Id" && result !="failed") {
-                                console.log("Success");
+                            if (result != "No Id" && result !="failed" && result.split(";").length==1) {
                                 var course = {};
                                 course["id"]=result;
                                 course["courseName"]=courseName;
@@ -953,12 +981,28 @@
                                 }else{
                                     course["status"]=false;
                                 }
-                                // course["status"]=status;
                                 courseList.push(course);
+                                alert("Course added successfully!!");
                                 loadCourseTable(courseList);
                                 
+                            }else if(result!="failed" && result.split(";").length==2){
+                                var resultArray = result.split(';');
+                                var id =  resultArray[0].substring(3);
+                                var course = {};
+                                course["id"]=id;
+                                course["courseName"]=courseName;
+                                course["departmentName"]=departmentOject.departmentName;
+                                course["instructorName"]=instructorOject.instructorName;
+                                if(status=="on"){
+                                    course["status"]=true;
+                                }else{
+                                    course["status"]=false;
+                                }
+                                courseList.push(course);
+                                alert("Course added, but not updated the instructor table with course details");
+                                loadCourseTable(courseList);
                             }else{
-                                alert(result+ " Not Added!!");
+                                alert("Failed to add course!");
                             }
                         },
                         error: function (err) {
@@ -1049,20 +1093,60 @@
                 renderTable();
             });
 
-            // Initial rendering
             renderTable();
 
-            // Save profile data
-            $("#saveProfile").click(function () {
-                var name = $("#name").val();
+            $("#updateProfile").click(function () {
+                var firstname = $("#firstname").val();
+                var lastname = $("#lastname").val();
                 var email = $("#email").val();
-                var znumber = $("#znumber").val();
-                var address = $("#address").val();
-                // You can send this data to your server for saving or perform any other action as needed.
-                // For now, we'll just display an alert with the data.
-                alert("Name: " + name + "\nEmail: " + email + "\nZ Number: " + znumber + "\nAddress: " + address);
-                $("#profileModal").modal("hide");
-            });
+                var password = $("#password").val();
+                if(firstname=="" && lastname=="" && email=="" && password==""){
+                    $("#updateStatusMsg").html("No changes made to update!");
+                    sleep(1500).then(()=>{
+                        $("#updateStatusMsg").fadeOut(1500);
+                    });
+                }else{
+                    $.ajax({
+                        type: "POST",
+                        url: "profileUpdate",
+                        data: {
+                            firstname: firstname,
+                            lastname: lastname,
+                            usertype: "admin",
+                            email: email,
+                            password: password,
+                            oldEmail: $("#oldEmail").text()
+                        },
+                        success: function (result) {
+                            if (result == "failed") {
+                                $("#updateStatusMsg").html("Failed to updated! <span style='color:red'> &times; </span>");
+                            }
+                            else if(result=="duplicate"){
+                                $("#updateStatusMsg").html("Email already exists! <span style='color:red'> &times; </span>");
+                            }
+                            else {
+                                $("#updateStatusMsg").html("Successfully updated! <span style='color:green'> &#10004 </span>");
+                                if (firstname != "" && firstname!=null) {
+                                    $("#firstnameLabel").text(firstname);
+                                }
+                                if (lastname != "" && lastname != null) {
+                                    $("#lastnameLabel").text(lastname);
+                                }
+                                if (password != "" && password!=null) {
+                                    $("#passwordLabel").text(password);
+                                }
+                                if((email!="" && email!=null)){
+                                    $("#emailLabel").text(email);
+                                    document.cookie = "TAusername=" + email;
+                                }
+                            }
+                            sleep(1500).then(()=>{
+                                $("#updateStatusMsg").fadeOut(1500);
+                            });
+                        }
+                    });
+                }
+                });
 
             $(document).on("click", ".view-application", function () {
                 var applicationData = $(this).data("application");

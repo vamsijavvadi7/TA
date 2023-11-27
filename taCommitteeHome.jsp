@@ -220,6 +220,9 @@
                 padding:1px 10px;
                 margin-right:5px;
             }
+            #updateStatusMsg{
+                margin-left:18%;
+            }
 
         </style>
     </head>
@@ -327,6 +330,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="profileModalLabel">Profile</h5>
+                        <span id="updateStatusMsg"></span>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -344,11 +348,11 @@
                                     placeholder="Update your lastname" />
                             </div>
                             <div class="form-group">
-                                <label for="email" id="oldEmail">${email}</label>
+                                <label for="email" id="emailLabel">${email}</label>
                                 <input type="email" class="form-control" id="email" placeholder="Update your email" />
                             </div>
                             <div class="form-group">
-                                <label for="password">${password}</label>
+                                <label for="password" id="passwordLabel">${password}</label>
                                 <input type="password" class="form-control" id="password"
                                     placeholder="Enter your new password" />
                             </div>
@@ -516,17 +520,6 @@
             renderTable();
             loadApprovedTAsTable(approvedTAsList);
 
-            $("#saveProfile").click(function () {
-                var name = $("#name").val();
-                var email = $("#email").val();
-                var znumber = $("#znumber").val();
-                var address = $("#address").val();
-                // You can send this data to your server for saving or perform any other action as needed.
-                // For now, we'll just display an alert with the data.
-                alert("Name: " + name + "\nEmail: " + email + "\nZ Number: " + znumber + "\nAddress: " + address);
-                $("#profileModal").modal("hide");
-            });
-
             $(document).on("click", ".view-application", function () {
                 var applicationData = $(this).data("application");
                 renderApplicationDetails(applicationData);
@@ -663,38 +656,51 @@
                 var lastname = $("#lastname").val();
                 var email = $("#email").val();
                 var password = $("#password").val();
-                // alert(firstname, lastname, email, password);
-                $.ajax({
-                    type: "POST",
-                    url: "profileUpdate",
-                    data: {
-                        firstname: firstname,
-                        lastname: lastname,
-                        usertype: "committee",
-                        newEmail: email,
-                        password: password,
-                        oldEmail: $("#oldEmail").text()
-                    },
-                    success: function (result) {
-                        if (result == "failed") {
-                            alert("Failed to update profile!");
+                if(firstname=="" && lastname=="" && email=="" && password==""){
+                    $("#updateStatusMsg").html("No changes made to update!");
+                    sleep(1500).then(()=>{
+                        $("#updateStatusMsg").fadeOut(1500);
+                    });
+                }else{
+                    $.ajax({
+                        type: "POST",
+                        url: "profileUpdate",
+                        data: {
+                            firstname: firstname,
+                            lastname: lastname,
+                            usertype: "committee",
+                            newEmail: email,
+                            password: password,
+                            oldEmail: $("#oldEmail").text()
+                        },
+                        success: function (result) {
+                            if(result == "failed") {
+                                $("#updateStatusMsg").html("Failed to update! <span style='color:red'> &times; </span>");
+                            }
+                            else if(result == "success"){
+                                $("#updateStatusMsg").html("Successfully updated! <span style='color:green'> &#10004 </span>");
+                                if (firstname != "" && firstname!=null) {
+                                    $("#firstnameLabel").text(firstname);
+                                }
+                                if (lastname != "" && lastname!=null) {
+                                    $("#lastnameLabel").text(lastname);
+                                }
+                                if(email!=null && email!=""){
+                                    $("#emailLabel").text(email);
+                                    document.cookie = "TAusername=" + email;
+                                }
+                                if(password!=null && password!=""){
+                                    $("#passwordLabel").text(password);
+                                }
+                            }else{
+                                $("#updateStatusMsg").html("Email already exists! <span style='color:red'> &times; </span>");
+                            }
+                            sleep(1500).then(()=>{
+                                $("#updateStatusMsg").fadeOut(1500);
+                            });
                         }
-                        else if(result == "success"){
-                            alert("Updated Succesfully");
-                            if (firstname != "") {
-                                $("#firstnameLabel").text(firstname);
-                            }
-                            if (lastname != "") {
-                                $("#lastnameLabel").text(lastname);
-                            }
-                            if(email!=null && email!=""){
-                                document.cookie = "TAusername=" + email;
-                            }
-                        }else{
-                            alert("No changes made to update");
-                        }
-                    }
-                });
+                    });
+                }
             });
         });
         function logout() {

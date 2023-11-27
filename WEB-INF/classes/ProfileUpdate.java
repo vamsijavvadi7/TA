@@ -8,7 +8,6 @@ import java.sql.*;
 public class ProfileUpdate extends HttpServlet{
   public void doPost(HttpServletRequest req, HttpServletResponse res)
   throws ServletException,IOException {
-	  
 	  try 
 	  {
 		  Class.forName("com.mysql.jdbc.Driver");
@@ -40,34 +39,47 @@ public class ProfileUpdate extends HttpServlet{
                 if (!"".equals(password) && password!=null) {
                     queryString += "password = '" + password + "', ";
                 }
-
                 if(usertype.equals("applicant")){
-                    String znumber, oldZnumber;
-                    znumber = req.getParameter("znumber");
-                    oldZnumber = req.getParameter("oldZnumber");
-                    if (!"".equals(znumber) & znumber!=null) {
-                        queryString += "znumber = '" + znumber + "'";
-                    }
-                    if (!queryString.isEmpty()) {
-                        queryString = queryString.substring(0, queryString.length() - 2);
-                        sqlQuery = "UPDATE ta_applicant SET " + queryString + " WHERE znumber='" + oldZnumber + "' OR email='" + oldEmail + "'";
+                    if(isUniqueUsername(connObject, "ta_applicant", "email", email) && isUniqueUsername(connObject, "ta_applicant", "znumber", znumber)){
+                        String znumber, oldZnumber;
+                        znumber = req.getParameter("znumber");
+                        oldZnumber = req.getParameter("oldZnumber");
+                        if (!"".equals(znumber) & znumber!=null) {
+                            queryString += "znumber = '" + znumber + "', ";
+                        }
+                        if (!queryString.isEmpty()) {
+                            queryString = queryString.substring(0, queryString.length() - 2);
+                            sqlQuery = "UPDATE ta_applicant SET " + queryString + " WHERE znumber='" + oldZnumber + "' OR email='" + oldEmail + "'";
+                        }
+                    }else{
+                        sqlQuery="";
                     }
                 }else if(usertype.equals("committee")){
-                    if (!queryString.isEmpty()) {
-                        queryString = queryString.substring(0, queryString.length() - 2);
-                        sqlQuery = "UPDATE ta_committee SET " + queryString + " WHERE email='" + oldEmail + "'";
+                    if(isUniqueUsername(connObject, "ta_committee", "email", email)){
+                        if (!queryString.isEmpty()) {
+                            queryString = queryString.substring(0, queryString.length() - 2);
+                            sqlQuery = "UPDATE ta_committee SET " + queryString + " WHERE email='" + oldEmail + "'";
+                        }
+                    }else{
+                        sqlQuery="";
                     }
-
                 }else if(usertype.equals("admin")){
-                    if (!queryString.isEmpty()) {
-                        queryString = queryString.substring(0, queryString.length() - 2);
-                        sqlQuery = "UPDATE admin SET " + queryString + " WHERE email='" + oldEmail + "'";
+                    if(isUniqueUsername(connObject, "admin", "email", email)){
+                        if (!queryString.isEmpty()) {
+                            queryString = queryString.substring(0, queryString.length() - 2);
+                            sqlQuery = "UPDATE admin SET " + queryString + " WHERE email='" + oldEmail + "'";
+                        }
+                    }else{
+                        sqlQuery="";
                     }
-
                 }else{
-                    if (!queryString.isEmpty()) {
-                        queryString = queryString.substring(0, queryString.length() - 2);
-                        sqlQuery = "UPDATE instructor SET " + queryString + " WHERE email='" + oldEmail + "'";
+                    if(isUniqueUsername(connObject, "instructor", "email", email)){
+                        if (!queryString.isEmpty()) {
+                            queryString = queryString.substring(0, queryString.length() - 2);
+                            sqlQuery = "UPDATE instructor SET " + queryString + " WHERE email='" + oldEmail + "'";
+                        }
+                    }else{
+                        sqlQuery="";
                     }
                 }
                 if(!sqlQuery.equals("")){
@@ -79,11 +91,11 @@ public class ProfileUpdate extends HttpServlet{
                     }
                     else{
                         printWriter.print("failed");
-                        System.out.println("==== 0 rows updated ====");
+                        System.out.println("Failed to update!");
                     }
                 }else{
-                        printWriter.print("NoUpdatedData");
-                        System.out.println("==== 0 rows updated ====");
+                        printWriter.print("duplicate");
+                        System.out.println("No SQL query found!");
                 }
             } else {
                 printWriter.print("Not connected to the database!");
@@ -94,5 +106,14 @@ public class ProfileUpdate extends HttpServlet{
         } catch (Exception e) {
             e.printStackTrace();
         }
+  }
+  public boolean isUniqueUsername(Connection con, String table, String columnName, String username){
+        Statement usernameStatement = con.createStatement();
+        String query = "SELECT * FROM "+table+" WHERE "+columnName+"='"+username+"'";
+        ResultSet usernameResultSet = usernameStatement.executeQuery(query);
+        if(usernameResultSet.next()){
+            return false;
+        }
+        return true;
   }
 }
