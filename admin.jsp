@@ -73,17 +73,12 @@
                 max-width: 400px;
                 border-radius: 10px;
             }
-
-            /* Center the filter icon horizontally */
             .filter-icon.third-column {
                 right: 20px;
-                /* Adjust the right position according to your needs */
                 top: 20px;
                 font-size: 1.5em;
                 z-index: 1000;
             }
-
-            /* Additional styles for the filter icon */
             .filter-icon {
                 cursor: pointer;
                 /* position: fixed; */
@@ -595,7 +590,6 @@
             </c:forEach>
 
             var courseNamesList = loadCourseTable(courseList);
-
             var departmentNamesList = [];
             var departmentList =[];
             <c:forEach items="${departmentList}" var="dept">
@@ -1043,12 +1037,10 @@
             departmentNamesList.forEach(department => {
                 departmentDropdown.append("<option value='" + department + "'>" + department + "</option>");
             });
-
             var courseDropdown = $("#courseDropdown");
             courseNamesList.forEach(course => {
                 courseDropdown.append("<option value='" + course + "'>" + course + "</option>");
             });
-            
             var uniqueStatuses = ["Open","In-Review","Approved","Rejected"];//[...new Set(taApplicationsList.map(app => app.status))];
             var statusDropdown = $("#statusDropdown");
             uniqueStatuses.forEach(status => {
@@ -1256,7 +1248,6 @@
                 $("#filterDropdown").toggle();
             });
 
-            // Apply Filters Event
             $("#applyFilters").click(function () {
                 $("#filterDropdown").hide();
                 renderTable();
