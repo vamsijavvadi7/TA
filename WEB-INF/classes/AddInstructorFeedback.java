@@ -39,15 +39,15 @@ public class AddInstructorFeedback extends HttpServlet{
                 } else {
 
                  
-                        int technicalSkill = req.getParameter("technicalSkill");
-                        int communicationSkill = req.getParameter("communicationSkill");
-                        int performanceRating = req.getParameter("performanceRating");
-                        String overallFeedback=req.getParameter("overallFeedback");
-                        int course_id=req.getParameter("course_id");
-                        int department_id=req.getParameter("department_id");
-                        int instructorId=req.getParameter("instructorId");
-                        String instructorName=req.getParameter("instructorName");
-                        int taId=req.getParameter("taId");
+                       int technicalSkill = Integer.parseInt(req.getParameter("technicalSkill"));
+            int communicationSkill = Integer.parseInt(req.getParameter("communicationSkill"));
+            int performanceRating = Integer.parseInt(req.getParameter("performanceRating"));
+            String overallFeedback = req.getParameter("overallFeedback");
+            int course_id = Integer.parseInt(req.getParameter("course_id"));
+            int department_id = Integer.parseInt(req.getParameter("department_id"));
+            int instructorId = Integer.parseInt(req.getParameter("instructorId"));
+            String instructorName = req.getParameter("instructorName");
+            int taId = Integer.parseInt(req.getParameter("taId"));
 
 
 

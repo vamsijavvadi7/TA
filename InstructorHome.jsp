@@ -6,7 +6,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instructor Dashboard</title>
-
+    <link href="css/bootstrap.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
+        <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+            integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Bootstrap CSS -->
    
 
@@ -236,7 +247,7 @@
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
   
-
+    <script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <!-- Your previous HTML and CSS styles remain unchanged -->
 
 <script>
@@ -295,7 +306,7 @@ instructorId=taData[0].instructorId;
     var taReview = [];
 
     var instructorName = '<%=request.getAttribute("instructorName")%>';
-console.log(instructorName);
+
 <c:forEach items="${taFeedbackList}" var="data">
     var dataObject = {};
     dataObject["id"] = "${data.taId}";
@@ -314,6 +325,7 @@ console.log(instructorName);
     dataObject["communicationSkill"] = "${data.communicationSkill}";
     dataObject["overallFeedback"] = "${data.overallFeedback}";
     taReview.push(dataObject);
+   
 </c:forEach>
 
 
@@ -338,6 +350,7 @@ function createTAList() {
     // Function to check if TA review is already submitted
     function checkIfReviewSubmitted(taId) {
         var submittedReview = taReview.find(review => review.id === taId);
+
         return submittedReview;
     }
 
@@ -349,11 +362,15 @@ function createTAList() {
             <p>Feedback already submitted for `+taName+`:</p>
             <p>`+submissionDetails+`</p>
         `;
+
+        
         feedbackDetailsModal.style.display = 'block';
 
         // Close the feedback details modal on close button click
-        const closeBtn = document.getElementsByClassName('close')[1]; // Get the second close button for the feedback details modal
-        closeBtn.onclick = function () {
+        const closeBtn = document.getElementsByClassName('close')[1];
+         // Get the second close button for the feedback details modal
+        
+         closeBtn.onclick = function () {
             feedbackDetailsModal.style.display = 'none';
         };
 
@@ -365,111 +382,108 @@ function createTAList() {
         };
     }
 
-    // Updated function to display feedback form or submitted details on button click
     document.addEventListener('click', function (e) {
     if (e.target && e.target.classList.contains('review-btn')) {
         const taId = e.target.dataset.taId;
         const modal = document.getElementById('feedbackModal');
         const submittedReview = checkIfReviewSubmitted(taId);
 
-        
         if (submittedReview) {
             // Display submitted details in the feedback details modal
-            const submissionDetails = `Technical Skills: `+submittedReview.technicalSkill+`/10 <br>
-             Communication Skills: `+submittedReview.communicationSkill+`/10 <br>
-             Overall Feedback: `+submittedReview.overallFeedback+`/10 <br>
-             Performance Rating: `+submittedReview.performanceRating+`/10`;
+            const submissionDetails = `Technical Skills: `+submittedReview.technicalSkill+`/10<br>
+                Communication Skills: `+ submittedReview.communicationSkill+`/10<br>
+                Overall Feedback: ` +submittedReview.overallFeedback+`<br>
+                Performance Rating: `+submittedReview.performanceRating +`/10`;
             displayFeedbackDetails(submittedReview.name, submissionDetails);
-        }else {
-                // Display feedback form
-                modal.style.display = 'block';
-               
-                // Handle form submission
-                const feedbackForm = document.getElementById('feedbackForm');
-                feedbackForm.addEventListener('submit', function (event) {
-                    event.preventDefault();
-                    const technicalSkill = document.getElementById('technicalSkill').value;
-                    const communicationSkill = document.getElementById('communicationSkill').value;
-                    const overallFeedback = document.getElementById('overallFeedback').value;
-                    const performanceRating = document.getElementById('performanceRating').value;
-                    // Add submission to taReview list
-                    taReview.push({
-                        id: taId,
-                        technicalSkill,
-                        communicationSkill,
-                        overallFeedback,
-                        performanceRating
+        } else {
+            // Display feedback form
+            modal.style.display = 'block';
 
-                    });
+            // Handle form submission
+            const feedbackForm = document.getElementById('feedbackForm');
+            feedbackForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const technicalSkill = document.getElementById('technicalSkill').value;
+                const communicationSkill = document.getElementById('communicationSkill').value;
+                const overallFeedback = document.getElementById('overallFeedback').value;
+                const performanceRating = document.getElementById('performanceRating').value;
 
-
+                // Add submission to taReview list
+                taReview.push({
+                    id: taId,
+                    technicalSkill,
+                    communicationSkill,
+                    overallFeedback,
+                    performanceRating
+                });
 
 
-                    $(".form-submit").click(()=>{
-            
-
-                console.log(technicalSkill, communicationSkill, performanceRating,overallFeedback);
-
-                if(technicalSkill !=="" && communicationSkill!=="" && performanceRating!=="" && overallFeedback==""){
+                
+                // Send data to the server using AJAX
+                if (technicalSkill !== "" && communicationSkill !== "" && performanceRating !== "" && overallFeedback !== "") {
                     $.ajax({
                         type: "POST",
                         url: "addInstructorFeedback",
-                        data:{
-                            technicalSkill:technicalSkill,
-                            communicationSkill:communicationSkill,
-                            performanceRating:performanceRating,
-                            overallFeedback:overallFeedback,
-                            course_id:course_id,
-                            department_id:department_id,
-                            instructorId:instructorId,
-                            instructorName:instructorName,
-                            taId:taId
-                            },
+                        data: {
+                            technicalSkill,
+                            communicationSkill,
+                            performanceRating,
+                            overallFeedback,
+                            course_id,
+                            department_id,
+                            instructorId,
+                            instructorName,
+                            taId
+                        },
                         success: function (result) {
-                            if (result =="success") {
-                                console.log("Success");
-                                alert("feedbackForm submitted")
-                                
-                            }else{
-
-                                alert(result+ " Not submitted!!");
+                            console.log('Success');
+                            if (result === "success") {
+                                alert("Feedback submitted successfully");
+                            } else {
+                                alert("Feedback submission failed");
                             }
                         },
                         error: function (err) {
-                            alert("ERROR: ", err);
+                            alert("ERROR: " + err);
                         }
                     });
                 }
+                
+                // Close the modal after submission
+                modal.style.display = 'none';
+                feedbackForm.reset();
             });
 
+            // Close the modal on close button click
+            const closeBtn = document.getElementsByClassName('close')[0];
+            closeBtn.onclick = function () {
+                modal.style.display = 'none';
+            };
 
-
-                    // Close the modal after submission
+            // Close the modal on clicking outside the modal content
+            window.onclick = function (event) {
+                if (event.target == modal) {
                     modal.style.display = 'none';
-                    feedbackForm.reset();
-                });
-
-                // Close the modal on close button click
-                const closeBtn = document.getElementsByClassName('close')[0];
-                closeBtn.onclick = function () {
-                    modal.style.display = 'none';
-                };
-
-                // Close the modal on clicking outside the modal content
-                window.onclick = function (event) {
-                    if (event.target == modal) {
-                        modal.style.display = 'none';
-                    }
-                };
-            }
+                }
+            };
         }
-    });
+    }
+});
 
+// Create TA list on page load
+document.addEventListener('DOMContentLoaded', createTAList);
 
-    // Create TA list on page load
-    document.addEventListener('DOMContentLoaded', createTAList);
 </script>
 
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
