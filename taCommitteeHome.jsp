@@ -656,6 +656,7 @@
                 var lastname = $("#lastname").val();
                 var email = $("#email").val();
                 var password = $("#password").val();
+                var oldEmail = $("#emailLabel").text();
                 if(firstname=="" && lastname=="" && email=="" && password==""){
                     $("#updateStatusMsg").html("No changes made to update!");
                     sleep(1500).then(()=>{
@@ -669,16 +670,18 @@
                             firstname: firstname,
                             lastname: lastname,
                             usertype: "committee",
-                            newEmail: email,
+                            email: email,
                             password: password,
-                            oldEmail: $("#oldEmail").text()
+                            oldEmail: oldEmail
                         },
                         success: function (result) {
                             if(result == "failed") {
                                 $("#updateStatusMsg").html("Failed to update! <span style='color:red'> &times; </span>");
+                                $("#updateStatusMsg").fadeIn(1500);
                             }
                             else if(result == "success"){
                                 $("#updateStatusMsg").html("Successfully updated! <span style='color:green'> &#10004 </span>");
+                                $("#updateStatusMsg").fadeIn(1500);
                                 if (firstname != "" && firstname!=null) {
                                     $("#firstnameLabel").text(firstname);
                                 }
@@ -693,6 +696,7 @@
                                     $("#passwordLabel").text(password);
                                 }
                             }else{
+                                $("#updateStatusMsg").fadeIn(1500);
                                 $("#updateStatusMsg").html("Email already exists! <span style='color:red'> &times; </span>");
                             }
                             sleep(1500).then(()=>{

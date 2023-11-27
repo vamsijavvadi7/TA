@@ -40,9 +40,9 @@ public class ProfileUpdate extends HttpServlet{
                     queryString += "password = '" + password + "', ";
                 }
                 if(usertype.equals("applicant")){
+                    String znumber, oldZnumber;
+                    znumber = req.getParameter("znumber");
                     if(isUniqueUsername(connObject, "ta_applicant", "email", email) && isUniqueUsername(connObject, "ta_applicant", "znumber", znumber)){
-                        String znumber, oldZnumber;
-                        znumber = req.getParameter("znumber");
                         oldZnumber = req.getParameter("oldZnumber");
                         if (!"".equals(znumber) & znumber!=null) {
                             queryString += "znumber = '" + znumber + "', ";
@@ -85,6 +85,7 @@ public class ProfileUpdate extends HttpServlet{
                 if(!sqlQuery.equals("")){
                     Statement statement = connObject.createStatement();
                     int updatedRows = statement.executeUpdate(sqlQuery);
+                    System.out.println("SQL Query : "+sqlQuery);
                     if (updatedRows == 1) {
                         printWriter.print("success");
                         System.out.println("Successfully updated!!");
@@ -107,7 +108,9 @@ public class ProfileUpdate extends HttpServlet{
             e.printStackTrace();
         }
   }
-  public boolean isUniqueUsername(Connection con, String table, String columnName, String username){
+  public boolean isUniqueUsername(Connection con, String table, String columnName, String username) throws IOException
+  {
+    try{
         Statement usernameStatement = con.createStatement();
         String query = "SELECT * FROM "+table+" WHERE "+columnName+"='"+username+"'";
         ResultSet usernameResultSet = usernameStatement.executeQuery(query);
@@ -115,5 +118,13 @@ public class ProfileUpdate extends HttpServlet{
             return false;
         }
         return true;
+    }
+    catch (SQLException e) {
+        System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        return false;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
   }
 }

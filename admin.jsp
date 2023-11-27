@@ -1102,6 +1102,7 @@
                 var password = $("#password").val();
                 if(firstname=="" && lastname=="" && email=="" && password==""){
                     $("#updateStatusMsg").html("No changes made to update!");
+                    $("#updateStatusMsg").fadeIn(1500);
                     sleep(1500).then(()=>{
                         $("#updateStatusMsg").fadeOut(1500);
                     });
@@ -1115,17 +1116,20 @@
                             usertype: "admin",
                             email: email,
                             password: password,
-                            oldEmail: $("#oldEmail").text()
+                            oldEmail: $("#emailLabel").text()
                         },
                         success: function (result) {
                             if (result == "failed") {
                                 $("#updateStatusMsg").html("Failed to updated! <span style='color:red'> &times; </span>");
+                                $("#updateStatusMsg").fadeIn(1500);
                             }
                             else if(result=="duplicate"){
                                 $("#updateStatusMsg").html("Email already exists! <span style='color:red'> &times; </span>");
+                                $("#updateStatusMsg").fadeIn(1500);
                             }
                             else {
                                 $("#updateStatusMsg").html("Successfully updated! <span style='color:green'> &#10004 </span>");
+                                $("#updateStatusMsg").fadeIn(1500);
                                 if (firstname != "" && firstname!=null) {
                                     $("#firstnameLabel").text(firstname);
                                 }

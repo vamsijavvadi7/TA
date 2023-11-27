@@ -617,15 +617,17 @@
                                 email: email,
                                 znumber: znumber,
                                 password: password,
-                                oldEmail: $("#oldEmail").text(),
-                                oldZnumber: $("#oldZnumber").text()
+                                oldEmail: $("#emailLabel").text(),
+                                oldZnumber: $("#znumberLabel").text()
                             },
                             success: function (result) {
                                 if (result == "failed") {
                                     $("#updateStatusMsg").html("Failed to updated! <span style='color:red'> &times; </span>");
+                                    $("#updateStatusMsg").fadeIn(1500);
                                 }
                                 else if(result=="duplicate"){
                                     $("#updateStatusMsg").html("Email or Znumber already exists! <span style='color:red'> &times; </span>");
+                                    $("#updateStatusMsg").fadeIn(1500);
                                 }
                                 else {
                                     $("#updateStatusMsg").html("Successfully updated! <span style='color:green'> &#10004 </span>");
