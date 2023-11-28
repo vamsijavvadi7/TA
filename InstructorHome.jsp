@@ -292,16 +292,7 @@ instructorId=taData[0].instructorId;
 
 
 
-    // var taReview = [
-    //     {
-    //         id: 'ta1',
-    //         name:'TA1',
-    //         technicalSkill: 3,
-    //         communicationSkill: 4,
-    //         overallFeedback: "hes good he done this job good"
-    //     }
-    // ]
-
+   
 
     var taReview = [];
 
@@ -324,6 +315,7 @@ instructorId=taData[0].instructorId;
     dataObject["technicalSkill"] = "${data.technicalSkill}";
     dataObject["communicationSkill"] = "${data.communicationSkill}";
     dataObject["overallFeedback"] = "${data.overallFeedback}";
+    
     taReview.push(dataObject);
    
 </c:forEach>
@@ -333,6 +325,7 @@ instructorId=taData[0].instructorId;
     // Function to create TA list items
   
 function createTAList() {
+    
     var taListContainer = document.getElementById('taList');
     taListContainer.innerHTML = ''; // Clear existing list before appending new items
 
@@ -394,6 +387,8 @@ function createTAList() {
                 Communication Skills: `+ submittedReview.communicationSkill+`/10<br>
                 Overall Feedback: ` +submittedReview.overallFeedback+`<br>
                 Performance Rating: `+submittedReview.performanceRating +`/10`;
+
+                
             displayFeedbackDetails(submittedReview.name, submissionDetails);
         } else {
             // Display feedback form
