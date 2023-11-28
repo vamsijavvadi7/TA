@@ -327,7 +327,6 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <!-- Profile form with editable fields -->
                             <form id="profileForm">
                                 <div class="form-group">
                                     <label for="firstname" id="firstnameLabel">${firstname}</label>
@@ -340,16 +339,16 @@
                                         placeholder="Update your lastname">
                                 </div>
                                 <div class="form-group">
-                                    <label for="email" id="oldEmail">${email}</label>
+                                    <label for="email" id="emailLabel">${email}</label>
                                     <input type="email" class="form-control" id="email" placeholder="Update your email">
                                 </div>
                                 <div class="form-group">
-                                    <label for="znumber" id="oldZnumber">${znumber}</label>
+                                    <label for="znumber" id="znumberLabel">${znumber}</label>
                                     <input type="text" class="form-control" id="znumber"
                                         placeholder="Update your Znumber">
                                 </div>
                                 <div class="form-group">
-                                    <label for="password">********</label>
+                                    <label for="password" id="passwordLabel">${password}</label>
                                     <input type="password" class="form-control" id="password"
                                         placeholder="Enter your new password">
                                 </div>
@@ -618,15 +617,17 @@
                                 email: email,
                                 znumber: znumber,
                                 password: password,
-                                oldEmail: $("#oldEmail").text(),
-                                oldZnumber: $("#oldZnumber").text()
+                                oldEmail: $("#emailLabel").text(),
+                                oldZnumber: $("#znumberLabel").text()
                             },
                             success: function (result) {
-                                if (result == "Failed") {
+                                if (result == "failed") {
                                     $("#updateStatusMsg").html("Failed to updated! <span style='color:red'> &times; </span>");
-                                    sleep(1500).then(()=>{
-                                        $("#updateStatusMsg").fadeOut(1500);
-                                    })
+                                    $("#updateStatusMsg").fadeIn(1500);
+                                }
+                                else if(result=="duplicate"){
+                                    $("#updateStatusMsg").html("Email or Znumber already exists! <span style='color:red'> &times; </span>");
+                                    $("#updateStatusMsg").fadeIn(1500);
                                 }
                                 else {
                                     $("#updateStatusMsg").html("Successfully updated! <span style='color:green'> &#10004 </span>");
@@ -645,19 +646,21 @@
                                     } 
                                     if((znumber!="" && znumber!=null)){
                                         $("#znumberLabel").text(znumber);
-                                        document.cookie = "TAusername=" + email;
+                                        document.cookie = "TAusername=" + oldEmail;
                                     }
-                                    sleep(1500).then(()=>{
-                                        $("#updateStatusMsg").fadeOut(1500);
-                                    })
                                 }
+                                sleep(1500).then(()=>{
+                                    $("#updateStatusMsg").fadeOut(1500);
+                                });
                             }
                         });
                     }
                 });
+
                 $(document).on('click','.acceptOffer', ()=>{
                     acceptRejectOffer($(".declineOffer").attr("data"),'accepted');
                 });
+                
                 $(document).on('click','.declineOffer', ()=>{
                     acceptRejectOffer($(".declineOffer").attr("data"),'declined');
                 });
@@ -722,10 +725,6 @@
                         },
                         success: function (result) {
                             if (result == "failed") {
-                                // $("#updateStatusMsg").html("Failed to updated! <span style='color:red'> &times; </span>");
-                                // sleep(1500).then(()=>{
-                                //     $("#updateStatusMsg").fadeOut(1500);
-                                // });
                                 alert("failed");
                             }
                             else {
