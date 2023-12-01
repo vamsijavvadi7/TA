@@ -36,6 +36,19 @@
             text-align: center;
         }
 
+        .navbar-text {
+                cursor: pointer;
+        }
+
+        .navbar-brand {
+                cursor: default;
+        }
+        .dash {
+                background-color: #533B78 !important;
+                color: white !important;
+        }
+
+
         .container {
             margin: 20px auto;
             max-width: 800px;
@@ -190,8 +203,14 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar">
-        <div class="navbar-brand">Instructor Dashboard</div>
+   
+    <nav class="dash navbar navbar-expand-lg navbar-light bg-light">
+        <a class="dash navbar-brand" href="#">Instructor Dashboard</a>
+        <!-- <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="dash nav-link" href="#" data-toggle="modal" data-target="#profileModal">Profile</a>
+            </li>
+        </ul> -->
     </nav>
 
     <!-- Main Content -->
@@ -244,6 +263,51 @@
         </div>
     </div>
 
+           
+            <!-- Profile Modal -->
+            <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="profileModalLabel">Profile</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Profile form with editable fields -->
+                            <form id="profileForm">
+                                <div class="form-group">
+                                    <label for="firstname" id="firstnameLabel">${firstname}</label>
+                                    <input type="text" class="form-control" id="firstname"
+                                        placeholder="Update your firstname">
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastname" id="lastnameLabel">${lastname}</label>
+                                    <input type="text" class="form-control" id="lastname"
+                                        placeholder="Update your lastname">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email" id="oldEmail">${email}</label>
+                                    <input type="email" class="form-control" id="email" placeholder="Update your email">
+                                </div>
+                            
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">********</label>
+                                    <input type="password" class="form-control" id="password"
+                                        placeholder="Enter your new password">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-warning" id="updateProfile">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
   
@@ -261,7 +325,7 @@
     var taData = [];
     var course_id=0;
     var department_id=0;
-    var instructorName='';
+  
     var instructorId=0;
 <c:forEach items="${taList}" var="data" varStatus="loop">
     var dataObject = {};
@@ -325,7 +389,7 @@ instructorId=taData[0].instructorId;
     // Function to create TA list items
   
 function createTAList() {
-    
+   
     var taListContainer = document.getElementById('taList');
     taListContainer.innerHTML = ''; // Clear existing list before appending new items
 
@@ -352,7 +416,7 @@ function createTAList() {
         const feedbackDetailsModal = document.getElementById('feedbackDetailsModal');
         const feedbackDetailsContent = document.getElementById('feedbackDetailsContent');
         feedbackDetailsContent.innerHTML = `
-            <p>Feedback already submitted for `+taName+`:</p>
+            <p>Feedback already submitted</p>
             <p>`+submissionDetails+`</p>
         `;
 
@@ -374,6 +438,61 @@ function createTAList() {
             }
         };
     }
+
+
+      // Save profile data
+      $("#saveProfile").click(function () {
+                        var name = $("#name").val();
+                        var email = $("#email").val();
+                        var znumber = $("#znumber").val();
+                        var address = $("#address").val();
+                        // You can send this data to your server for saving or perform any other action as needed.
+                        // For now, we'll just display an alert with the data.
+                        alert("Name: " + name + "\nEmail: " + email + "\nZ Number: " + znumber + "\nAddress: " + address);
+                        $("#profileModal").modal("hide");
+                    });
+
+
+
+                    $("#updateProfile").click(function () {
+                    var firstname = $("#firstname").val();
+                    var lastname = $("#lastname").val();
+                    var email = $("#email").val();
+                    var znumber = $("#znumber").val();
+                    var password = $("#password").val();
+
+                    $.ajax({
+                        type: "POST",
+                        url: "profileUpdate",
+                        data: {
+                            firstname: firstname,
+                            lastname: lastname,
+                            usertype: "applicant",
+                            email: email,
+                            znumber: znumber,
+                            password: password,
+                            oldEmail: $("#oldEmail").text(),
+                            oldZnumber: $("#oldZnumber").text()
+                        },
+                        success: function (result) {
+                            if (result == "Failed") {
+                                alert("Update Failed!!");
+                            }
+                            else {
+                                alert("Updated Succesfully");
+                                if (firstname != "") {
+                                    $("#firstnameLabel").text(firstname);
+                                }
+                                if (lastname != "") {
+                                    $("#lastnameLabel").text(lastname);
+                                }
+
+
+                                document.cookie = "TAusername=" + email;
+                            }
+                        }
+                    });
+                });               
 
     document.addEventListener('click', function (e) {
     if (e.target && e.target.classList.contains('review-btn')) {
