@@ -61,7 +61,10 @@
                 <span class="navbar-brand mb-0 h1" style="color:white;">SIGN IN</span>
             </div>
         </nav>
+<<<<<<< HEAD
         <!-- <h1 style="margin-top:4%;color:#533b78;"></h1><br> -->
+=======
+>>>>>>> master
         <div class="container">
             <div class="jumbotron" style="background-color: #a087c4;">
                 <form name="login" id="loginForm">
@@ -70,13 +73,11 @@
                         <input type="email" class="form-control" id="username" required="true" name="username"
                             placeholder="name@example.com">
                     </div>
-                    <!-- <input type="text" placeholder="znumber or email" id="username" required="true" name="username" /> -->
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password" required="true" name="password"
                             placeholder="password">
                     </div>
-                    <!-- <input type="text" placeholder="password" id="username" required="true" name="username" /> -->
                     <div class="form-group">
                         <label for="usertype">User type</label>
                         <select class="form-control" id="usertype">
@@ -84,17 +85,13 @@
                             <option value="applicant">Applicant</option>
                             <option value="admin">Administrator</option>
                             <option value="committee">TA Committee</option>
+<<<<<<< HEAD
                             <option value="instructor">Instructor</option>
+=======
+                            <option value="instrutor">Instructor</option>
+>>>>>>> master
                         </select>
                     </div>
-                    <!-- <select id="usertype" name="usertype">
-                        <option value="none"> -- select -- </option>
-                        <option value="applicant">Applicant</option>
-                        <option value="admin">Administrator</option>
-                        <option value="committee">TA Committee</option>
-                        <option value="instructor">Instructor</option>
-                    </select> -->
-                    <!-- <br> -->
                     <br>
                     <br>
                     <p style="color:white;font-size: small;">
@@ -124,7 +121,10 @@
             window.location.href = "register.jsp";
         })
         $("#loginBtn").click(function () {
+<<<<<<< HEAD
             var usertype = document.login.usertype.value;
+=======
+>>>>>>> master
             if (document.login.usertype.value != "" || document.login.usertype.value != "none") {
                 $.ajax({
                     type: "GET",
@@ -135,6 +135,7 @@
                             alert("Incorrect credentials!!");
                         }
                         else {
+<<<<<<< HEAD
                             if (usertype == "applicant") {
                                 window.location.href = "applicantHome";
                             } else if (usertype == "admin") {
@@ -145,6 +146,16 @@
                                 window.location.href = "committeeHome";
                             } else {
                                 alert("Error");
+=======
+                            if ($("#usertype").val() == "admin") {
+                                window.location.href = "adminHome";
+                            } else if ($("#usertype").val() == "applicant") {
+                                window.location.href = "applicantHome";
+                            } else if ($("#usertype").val() == "committee") {
+                                window.location.href = "committeeHome";
+                            } else {
+                                window.location.href = "instructorHome";
+>>>>>>> master
                             }
                         }
                     }
