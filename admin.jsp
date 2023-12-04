@@ -238,7 +238,6 @@
                             Manage Users
                         </a>
                         <div class="dropdown-menu" aria-labelledby="manageUsers">
-                            <a class="dropdown-item" href="#" id="manageTAs">TA's <i class="fa-solid fa-pencil fa-sm"></i></a>
                             <a class="dropdown-item" href="#" id="manageCommittee">Committee <i class="fa-solid fa-pencil fa-sm"></i></a>
                             <a class="dropdown-item" href="#" id="manageInstructors">Instructors <i class="fa-solid fa-pencil fa-sm"></i></a>
                         </div>
