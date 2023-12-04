@@ -47,7 +47,7 @@ public class AddRemoveInstructor extends HttpServlet{
                         String courseName = req.getParameter("courseName");
                         int departmentId = Integer.parseInt(req.getParameter("departmentId"));
 
-                        String query = "INSERT INTO instructor (email, password, first_name, course_name, course_id, department_id) VALUES(?,?,?,?,?,?)";
+                        String query = "INSERT INTO instructor (email, password, firstname, coursename, course_id, department_id) VALUES(?,?,?,?,?,?)";
                         PreparedStatement addInstructorPS = connObject.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
                         addInstructorPS.setString(1,email);
                         addInstructorPS.setString(2,password);
@@ -71,10 +71,8 @@ public class AddRemoveInstructor extends HttpServlet{
                             System.out.println("Failed to add instructor!");
                         }
                     } else {
-                        // System.out.println(req.getParameterValues("ids"));
                         System.out.println(req.getParameter("ids"));
                         String ids = req.getParameter("ids");
-                        // String idsString = String.join(",", ids);
                         String query = "DELETE FROM instructor WHERE id IN ("+ids+")";
                         Statement instructorStatement = connObject.createStatement();
                         int updatedRows = instructorStatement.executeUpdate(query);

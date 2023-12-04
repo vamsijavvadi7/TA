@@ -1,7 +1,6 @@
 <!DOCTYPE>
 <html>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
     <head>
         <meta name="viewport" content="width=device-width initial-scale=1">
         <title>Administrator</title>
@@ -14,6 +13,7 @@
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
+        <script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
         <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
             integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
@@ -50,19 +50,11 @@
                 color:white;
                 border:none;
             }
-            /* Updated styles for the filter dropdown */
             .filter-dropdown-div {
                 position: fixed;
-                /* top: 20px; */
-                /* right: 20px; */
-                /* background-color: #fff; */
                 background-color: rgba(0,0,0,0.8);
-                /* padding: 20px; */
-                /* border-radius: 10px; */
-                /* box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); */
                 display: none;
                 z-index: 1000;
-                /* max-width: 400px; */
                 width: 100%;
                 text-align: center;
                 top:0;
@@ -103,9 +95,6 @@
                 background-color: #533b78;
                 color:white;
             }
-            #applicationsContainer{
-                margin-top:4%;
-            }
             #manageInstructorsScreen{
                 display:none;
                 text-align:center;
@@ -122,7 +111,7 @@
                 width:50%;
                 display:none;
             }
-            #addInstructorForm{
+            #instructorForm{
                 display:none;
                 width:50%;
             }
@@ -176,6 +165,57 @@
             #committeeForm{
                 display:none;
             }
+            #myListScreen{
+                display:none;
+            }
+            #approvedTAsScreen{
+                display:none;
+            }
+            .lineInmiddleH2 {
+                width: 100%;
+                text-align: center;
+                border-bottom: 1px solid #000;
+                line-height: 0.1em;
+                margin: 25px 0 25px;
+            }
+            .h2Span {
+                background: #fff;
+                padding: 0 10px;
+            }
+            #applicationDetailsContent{
+                overflow-y: auto;
+                height: 600px;
+                position: relative;
+                display: block;
+            }
+            #applicationDetailsContent p{
+                background-color: #8465b3;
+                margin-bottom:5px;
+                padding:3px;
+                color:white;
+                font-weight: 700;
+            }
+            #applicationDetailsContent a{
+                color:white;
+            }
+            #applicationDetailsContent strong{
+                color:#533b78;
+                background-color: white;
+                border-radius:10px;
+                padding:1px 10px;
+                margin-right:5px;
+            }
+            #jumbotronBox {
+                background-color: #e4ddee;
+                border-radius: 15px 15px 15px 15px;
+                padding: 4rem 2rem;
+            }
+            #applicationsContainer {
+                max-width: 70%;
+            }
+            .container{
+                margin-top:2%;
+            }
         </style>
     </head>
     <body>
@@ -210,6 +250,9 @@
                         <a class="nav-link" href="#MyList" id="myList">My List</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="#ApprovedTAs" id="approvedTAs">Approved TAs</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#Profile" data-toggle="modal" data-target="#profileModal"
                             id="profileLink"><i class="fa-solid fa-user fa-lg"></i></a>
                     </li>
@@ -220,50 +263,54 @@
                 </span>
             </div>
         </nav>
-        <div id="applicationsContainer">
-            <h2 class="text-center">TA Applications</h2>
-            <center>
-                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+
+        <div id="applicationsContainer" class="container">
+            <div class="jumbotron" id="jumbotronBox">
+                <h2 class="text-center">TA Applications</h2>
+                <center>
+                    <div class="table-wrapper-scroll-y my-custom-scrollbar">
                     <table class="table table-striped" id="applicationsTable">
                         <thead>
                             <tr>
+                                <th>Application Id</th>
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Course Name</th>
                                 <th>Status</th>
                                 <th><i class="filter-icon fas fa-filter third-column" id="filterIcon"></i></th>
                             </tr>
                         </thead>
                         <tbody id="taApplicationsListTableBody"></tbody>
                     </table>
-                </div>
-            </center>
-            <div class="filter-dropdown-div" id="filterDropdown">
-                <div class="filter-dropdown third-column" >
-                    <div class="mb-3 dropdown">
-                        <label for="departmentDropdown" class="form-label">Select Department:</label>
-                        <select class="form-select" id="departmentDropdown">
-                            <option value="all">All Departments</option>
-                        </select>
                     </div>
-                    <div class="mb-3 dropdown">
-                        <label for="courseDropdown" class="form-label">Select Course:</label>
-                        <select class="form-select" id="courseDropdown">
-                            <option value="all">All Courses</option>
-                        </select>
+                </center>
+                <div class="filter-dropdown-div" id="filterDropdown">
+                    <div class="filter-dropdown third-column" >
+                        <div class="mb-3 dropdown">
+                            <label for="departmentDropdown" class="form-label">Select Department:</label>
+                            <select class="form-select" id="departmentDropdown">
+                                <option value="all">All Departments</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 dropdown">
+                            <label for="courseDropdown" class="form-label">Select Course:</label>
+                            <select class="form-select" id="courseDropdown">
+                                <option value="all">All Courses</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 dropdown">
+                            <label for="statusDropdown" class="form-label">Select Status:</label>
+                            <select class="form-select" id="statusDropdown">
+                                <option value="all">All Status</option>
+                            </select>
+                        </div>
+                        <button class="btn " id="applyFilters"><i class="fa-solid fa-rectangle-xmark"></i></button>
                     </div>
-                    <div class="mb-3 dropdown">
-                        <label for="statusDropdown" class="form-label">Select Status:</label>
-                        <select class="form-select" id="statusDropdown">
-                            <option value="all">All Status</option>
-                        </select>
-                    </div>
-                    <button class="btn " id="applyFilters"><i class="fa-solid fa-rectangle-xmark"></i></button>
                 </div>
             </div>
         </div>
 
-        <!-- Profile Modal -->
-        <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel"
+        <div id="profileModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -303,7 +350,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="applicationDetailsModal" tabindex="-1" role="dialog"
+        <div id="applicationDetailsModal" class="modal fade" tabindex="-1" role="dialog"
             aria-labelledby="applicationDetailsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -329,149 +376,204 @@
         </div>
 
         <div id="manageInstructorsScreen">
-            <div id="content">
-                <h2>Manage Instructors</h2>
-                <div class="addRemoveButtons">
-                    <button type="button" class="btn btn-primary custom-btn" id="showInstructorFormBtn">New Instructor</button>
-                    <button type="button" class="btn btn-danger custom-btn" id="removeInstructorsBtn">Remove</button>
+            <div class="container">
+                <div class="jumbotron" id="jumbotronBox">
+                    <h2>Manage Instructors</h2>
+                    <div class="addRemoveButtons">
+                        <button type="button" class="btn btn-primary custom-btn" id="showInstructorFormBtn">New Instructor</button>
+                        <button type="button" class="btn btn-danger custom-btn" id="removeInstructorsBtn">Remove</button>
+                    </div>
+                    <center>
+                        <form id="instructorForm" name="instructorForm" method="POST">
+                            <div class="form-group">
+                                <!-- <label for="instructorName">Name:</label> -->
+                                <input type="text" class="form-control" id="instructorName" name="instructorName" placeholder="Enter new instructor name" required>
+                            </div>
+                            <div class="form-group">
+                                <!-- <label for="instructorName">Name:</label> -->
+                                <input type="email" class="form-control" id="instructorEmail" name="instructorEmail" placeholder="Enter instructor Email" required>
+                            </div>
+                            <div class="form-group">
+                                <!-- <label for="instructorName">Name:</label> -->
+                                <input type="password" class="form-control" id="instructorPassword" name="instructorPassword" placeholder="Enter password" required>
+                            </div>
+                            <div class="form-group" >
+                                <select class="form-control" id="instructorCourseDropdown" >
+                                    <option value="0">--- select instructor course ---</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="addInstructorbtn">Add</button>
+                        </form>
+                        <table class="table table-hover" id="instructorsTable">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Instructor Id</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Course Name</th>
+                                <th scope="col">Department Name</th>
+                                <th scope="col"></th>
+                              </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </center>
                 </div>
-                <center>
-                    <form id="addInstructorForm" name="addInstructorForm" method="POST">
-                        <div class="form-group">
-                            <!-- <label for="instructorName">Name:</label> -->
-                            <input type="text" class="form-control" id="instructorName" name="instructorName" placeholder="Enter new instructor name" required>
-                        </div>
-                        <div class="form-group">
-                            <!-- <label for="instructorName">Name:</label> -->
-                            <input type="email" class="form-control" id="instructorEmail" name="instructorEmail" placeholder="Enter instructor Email" required>
-                        </div>
-                        <div class="form-group">
-                            <!-- <label for="instructorName">Name:</label> -->
-                            <input type="password" class="form-control" id="instructorPassword" name="instructorPassword" placeholder="Enter password" required>
-                        </div>
-                        <div class="form-group" >
-                            <select class="form-control" id="instructorCourseDropdown" >
-                                <option value="0">--- select instructor course ---</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-primary" id="addInstructorbtn">Add</button>
-                    </form>
-                    <table class="table table-hover" id="instructorsTable">
-                        <thead>
-                          <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Instructor Id</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Course Name</th>
-                            <th scope="col">Department Name</th>
-                            <th scope="col"></th>
-                          </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </center>
             </div>
         </div>
         
         <div id="manageCommitteeScreen">
-            <div id="content">
-                <h2>Manage Committee Members</h2>
-                <div class="addRemoveButtons">
-                    <button type="button" class="btn btn-primary custom-btn" id="showCommitteeFormBtn">Add New Member</button>
-                    <button type="button" class="btn btn-danger custom-btn" id="removeCommitteeBtn">Remove</button>
+            <div class="container">
+                <div class="jumbotron" id="jumbotronBox">
+                    <h2>Manage Committee Members</h2>
+                    <div class="addRemoveButtons">
+                        <button type="button" class="btn btn-primary custom-btn" id="showCommitteeFormBtn">Add New Member</button>
+                        <button type="button" class="btn btn-danger custom-btn" id="removeCommitteeBtn">Remove</button>
+                    </div>
+                    <center>
+                        <form id="committeeForm" method="POST" name="committeeForm">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="name" id="committeeMemberName" placeholder="Enter Committee Member Name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control" name="email" id="committeeMemberEmail" placeholder="Enter Committee Member Email" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" name="password" id="committeeMemberPassword" placeholder="Enter Committee Member Password" required>
+                            </div>
+                            <button class="btn btn-primary" id="addCommitteeBtn">Add</button>
+                        </form>
+                        <table class="table table-hover" id="committeeTable">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Committee ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col"></th>
+                              </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </center>
                 </div>
-                <center>
-                <form id="committeeForm" method="POST" name="committeeForm">
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="name" id="committeeMemberName" placeholder="Enter Committee Member Name" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" class="form-control" name="email" id="committeeMemberEmail" placeholder="Enter Committee Member Email" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" class="form-control" name="password" id="committeeMemberPassword" placeholder="Enter Committee Member Password" required>
-                    </div>
-                    <button class="btn btn-primary" id="addCommitteeBtn">Add</button>
-                </form>
-                <table class="table table-hover" id="committeeTable">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Committee ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col"></th>
-                      </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                </center>
             </div>
         </div>
 
         <div id="manageCoursesScreen">
-            <h2>Manage Courses</h2>
-            <div class="addRemoveButtons">
-                <button type="button" class="btn btn-primary custom-btn" id="showCourseFormBtn">Add New Course</button>
-                <button type="button" class="btn btn-danger custom-btn" id="removeCourseBtn">Remove</button>
+            <div class="container">
+                <div class="jumbotron" id="jumbotronBox">
+                    <h2>Manage Courses</h2>
+                    <div class="addRemoveButtons">
+                        <button type="button" class="btn btn-primary custom-btn" id="showCourseFormBtn">Add New Course</button>
+                        <button type="button" class="btn btn-danger custom-btn" id="removeCourseBtn">Remove</button>
+                    </div>
+                    <center>
+                        <form id="courseForm">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="courseNameCourse" placeholder="Enter course name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="departmentIdCourse" placeholder="Enter department Id" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="status" id="status1" value= "on" checked>
+                                <label class="form-check-label" for="status1">
+                                  Yes
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="status" id="status2" value="off">
+                                <label class="form-check-label" for="status2">
+                                  No
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="instructorIdCourse" placeholder="Enter Instructor Id" required>
+                            </div>
+                            <button class="btn btn-primary" id="addCourseBtn">Add</button>
+                        </form>
+                        <table class="table table-hover" id="coursesTable">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Course ID</th>
+                            <th scope="col">Course Name</th>
+                            <th scope="col">Department Name</th>
+                            <th scope="col">Instructor Name</th>
+                            <th scope="col">Status</th>
+                            <th scope="col"></th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                        </table>
+                    </center>
+                </div>
             </div>
-            <center>
-                <form id="courseForm">
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="courseNameCourse" placeholder="Enter course name" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="departmentNameCourse" placeholder="Enter department name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Status</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="status" id="status1">
-                        <label class="form-check-label" for="status1">
-                          Yes
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="status" id="status2" checked>
-                        <label class="form-check-label" for="status2">
-                          No
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="instructorNameCourse" required>
-                    </div>
-                    <button class="btn btn-primary" id="addCourseBtn">Add</button>
-                </form>
-                <table class="table table-hover" id="coursesTable">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Course ID</th>
-                    <th scope="col">Course Name</th>
-                    <th scope="col">Department Name</th>
-                    <th scope="col">Instructor Name</th>
-                    <th scope="col">Status</th>
-                    <th scope="col"></th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-                </table>
-            </center>
         </div>
-        
-        
+
+        <div id="myListScreen">
+            <div class="container">
+                <div class="jumbotron" id="jumbotronBox">
+                    <center>
+                        <h2>Admin Recommended Applications</h2>
+                        <div>
+                            <table class="table table-hover" id="myListTable">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Application Id</th>
+                                    <th scope="col">Z Number</th>
+                                    <th scope="col">Applicant Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Course Name</th>
+                                    <th scope="col">Department Name</th>
+                                  </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </center>
+                </div>
+            </div>
+        </div>
+
+        <div id="approvedTAsScreen">
+            <div class="container">
+                <div class="jumbotron" id="jumbotronBox">
+                    <center>
+                        <h2>Approved TA Applications</h2>
+                        <table class="table table-hover" id="approvedTAsTable">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Application Id</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Course Name</th>
+                                <th>Course Id</th>
+                                <th>Instructor Id</th>
+                                <th>Offer Released</th>
+                                <th scope="col"></th>
+                              </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <div class="buttonsRow">
+                            <button class="btn btn-primary" id="sendTAOffer">Send</button>
+                        </div>
+                    </center>
+                </div>
+            </div>
+        </div>
     </body>
-    <!-- Add Bootstrap and jQuery JS -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script> -->
-    <script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <!-- Add JavaScript to handle dropdown changes and filter table -->
     <script>
         $(document).ready(function () {
 
             var presentApplication = null;
-
             var courseList = [];
             <c:forEach items="${courseList}" var="course">
                 var course = {};
@@ -483,7 +585,8 @@
                 course["instructorName"]="${course.instructorName}";
                 courseList.push(course);
             </c:forEach>
-            console.log(courseList);
+
+            var courseNamesList = loadCourseTable(courseList);
 
             var departmentNamesList = [];
             var departmentList =[];
@@ -493,8 +596,7 @@
                 departmentObj["departmentId"]="${dept.departmentId}";
                 departmentObj["departmentName"] = "${dept.departmentName}";
                 departmentList.push(departmentObj);
-                </c:forEach>
-            console.log(departmentNamesList);
+            </c:forEach>
 
             var instructorsList = [];
             <c:forEach items="${instructorsList}" var="instructor">
@@ -506,7 +608,6 @@
                 instructor["email"]="${instructor.email}";
                 instructorsList.push(instructor);
             </c:forEach>
-            console.log(instructorsList);
 
             var committeeList = [];
             <c:forEach items="${committeeList}" var="committee">
@@ -516,7 +617,6 @@
                 committeeObj["email"]="${committee.email}";
                 committeeList.push(committeeObj);
             </c:forEach>
-            console.log(committeeList);
 
             var taApplicationsList = [];
             <c:forEach items="${applicationsList}" var="app">
@@ -544,37 +644,30 @@
                 application["previousExperience"]="${app.previousExperience}";
                 application["expCourse"]="${app.expCourse}";
                 application["expDuration"]="${app.expDuration}";
+                application["courseInstructorName"]="${app.courseInstructorName}";
                 application["recommended"]="${app.recommended}";
                 taApplicationsList.push(application);
             </c:forEach>
-            console.log(taApplicationsList);
 
-            var coursesTableRows = "";
-            var courseNamesList=[];
-            courseList.forEach((course, index)=>{
-                courseNamesList.push(course.courseName);
-                console.log(index+1);
-                let val = index+1;
-                coursesTableRows+= "<tr> <th scope='row'>"+val+"</th>"+
-                        "<td>"+course.id+"</td>"+
-                        "<td>"+course.courseName+"</td>"+
-                        "<td>"+course.departmentName+"</td>"+
-                        "<td>"+course.instructorName+"</td>"+
-                        "<td>"+course.status+"</td>"+
-                        `<td>
-                            <div class='form-check'>
-                                <input class='form-check-input cCheckbox' type='checkbox' id='flexCheckDefault'>
-                            </div>
-                        </td>
-                      </tr>`;
-                var courseId = course.id;
-                var courseName = course.courseName;
-                $("#instructorCourseDropdown").append("<option value='"+courseId+"'>"+courseName+"</option>");
-            });
-            $("#coursesTable").find('tbody').append(coursesTableRows);
+            var approvedTAsList = [];
+            <c:forEach items="${approvedApplicationsList}" var="app">
+                console.log("${app.applicationId}");
+                var application = { };
+                application["email"]="${app.email}";
+                application["applicantName"]="${app.applicantName}";
+                application["courseName"]="${app.courseName}";
+                application["instructorId"]="${app.instructorId}";
+                application["applicationId"]="${app.applicationId}";
+                application["courseId"]="${app.courseId}";
+                application["offered"]="${app.offered}";
+                approvedTAsList.push(application);
+            </c:forEach>
 
             loadInstructorTable(instructorsList);
             loadCommitteeTable(committeeList);
+            loadMyListTable(taApplicationsList);
+            console.log(approvedTAsList);
+            loadApprovedTAsTable(approvedTAsList);
 
             $("#removeInstructorsBtn").click(function(){
                 var selectedInstructorIds=[];
@@ -658,40 +751,66 @@
                 $(".dropdown-menu").toggle();
             });
 
+            $("#myList").click(()=>{
+                $("#applicationsContainer").hide();
+                $("#manageCommitteeScreen").hide();
+                $("#manageInstructorsScreen").hide();
+                $("#manageCoursesScreen").hide();
+                $("#approvedTAsScreen").hide();
+                $("#myListScreen").show();
+            })
+
+            $("#approvedTAs").click(()=>{
+                $("#applicationsContainer").hide();
+                $("#manageCommitteeScreen").hide();
+                $("#manageInstructorsScreen").hide();
+                $("#manageCoursesScreen").hide();
+                $("#myListScreen").hide();
+                $("#approvedTAsScreen").show();
+            })
+
             $(".dropdown-item").click(function () {
                 $(".dropdown-menu").toggle();
             });
 
             $("#home").click(function(){
-                $("#applicationsContainer").show();
                 $("#manageCommitteeScreen").hide();
                 $("#manageInstructorsScreen").hide();
+                $("#myListScreen").hide();
                 $("#manageCoursesScreen").hide();
+                $("#approvedTAsScreen").hide();
+                $("#applicationsContainer").show();
             })
 
             $("#manageInstructors").click(function(){
-                $("#manageInstructorsScreen").show();
                 $("#applicationsContainer").hide();
                 $("#manageCommitteeScreen").hide();
+                $("#myListScreen").hide();
                 $("#manageCoursesScreen").hide();
+                $("#approvedTAsScreen").hide();
+                $("#manageInstructorsScreen").show();
             });
 
             $("#manageCommittee").click(function(){
-                $("#manageCommitteeScreen").show();
                 $("#applicationsContainer").hide();
                 $("#manageInstructorsScreen").hide();
+                $("#myListScreen").hide();
                 $("#manageCoursesScreen").hide();
+                $("#approvedTAsScreen").hide();
+                $("#manageCommitteeScreen").show();
             });
 
             $("#manageCourses").click(function(){
-                $("#manageCoursesScreen").show();
                 $("#applicationsContainer").hide();
                 $("#manageInstructorsScreen").hide();
+                $("#myListScreen").hide();
                 $("#manageCommitteeScreen").hide();
+                $("#approvedTAsScreen").hide();
+                $("#manageCoursesScreen").show();
             });
 
             $("#showInstructorFormBtn").click(()=>{
-                $("#addInstructorForm").toggle();
+                $("#instructorForm").toggle();
             });
 
             $("#showCommitteeFormBtn").click(()=>{
@@ -706,12 +825,12 @@
                 event.preventDefault();
             });
 
-            $("#addInstructorForm").click(function(event){
+            $("#instructorForm").click(function(event){
                 event.preventDefault();
             });
 
             $("#closeInstructorFormBtn").click(()=>{
-                $("#addInstructorForm").fade();
+                $("#instructorForm").fade();
             });
 
             $("#addInstructorbtn").click(()=>{
@@ -802,30 +921,39 @@
 
             $("#addCourseBtn").click(()=>{
                 var courseName = $("#courseNameCourse").val();
-                var departmentName = $("#departmentNameCourse").val();
-                var status = $("input[name='status']").val();
-                var instructorName = $("#instructorNameCourse").val();
+                var departmentId = $("#departmentIdCourse").val();
+                var status = $("input[name='status']:checked").val();
+                var instructorId = $("#instructorIdCourse").val();
+                var departmentOject = departmentList.find((dept)=>{ return dept.departmentId==departmentId });
+                var instructorOject = instructorsList.find((instructor)=>{ return instructor.id==instructorId });
 
-                if(courseName !=="" && departmentName!=="" && status!=="" && instructorName!==""){
+                if(courseName !=="" && departmentId!=="" && status!=="" && instructorId!==""){
                     $.ajax({
                         type: "POST",
                         url: "addRemoveCourse",
                         data:{
                                 courseName:courseName,
-                                departmentName:departmentName,
+                                departmentId:departmentId,
                                 status:status,
-                                instructorName:instructorName,
+                                instructorId:instructorId,
                                 action:"add"
                             },
                         success: function (result) {
                             if (result != "No Id" && result !="failed") {
                                 console.log("Success");
-                                var committee = {};
-                                committee["id"]=result;
-                                committee["name"]=name;
-                                committee["email"]=email;
-                                committeeList.push(committee);
-                                loadCommitteeTable(committeeList);
+                                var course = {};
+                                course["id"]=result;
+                                course["courseName"]=courseName;
+                                course["departmentName"]=departmentOject.departmentName;
+                                course["instructorName"]=instructorOject.instructorName;
+                                if(status=="on"){
+                                    course["status"]=true;
+                                }else{
+                                    course["status"]=false;
+                                }
+                                // course["status"]=status;
+                                courseList.push(course);
+                                loadCourseTable(courseList);
                                 
                             }else{
                                 alert(result+ " Not Added!!");
@@ -838,32 +966,48 @@
                 }
             });
 
-            function logout() {
-                alert("Logging out!!");
-                document.cookie = "TAusername=na";
-                window.location.href = "login.jsp";
-            }
+            $("#sendTAOffer").click(()=>{
+                var selectedApplicantIds=[];
+                $('.tasCheckbox:checked').each(function() {
+                    var row = $(this).closest('tr');
+                    console.log(row.find('td:eq(0)').text());
+                    selectedApplicantIds.push(row.find('td:eq(0)').text());
+                });
+                var selectedApplicantIdsString = selectedApplicantIds.join();
+                $.ajax({
+                    type: "POST",
+                    url: "sendTAOffers",
+                    data:{
+                            ids:selectedApplicantIdsString
+                        },
+                    success: function (result) {
+                        if (result == "success") {
+                            alert("Offers sent succesfully!")
+                        }else{
+                            alert("Failed to send offers");
+                        }
+                    },
+                    error: function (err) {
+                        alert("ERROR: ", err);
+                    }
+                });
+            });
 
-            // var uniqueDepartments = [...new Set(taApplicationsList.map(app => app.departmentName))];
             var departmentDropdown = $("#departmentDropdown");
             departmentNamesList.forEach(department => {
                 departmentDropdown.append("<option value='" + department + "'>" + department + "</option>");
             });
 
-            // Populate unique course names in the course dropdown
-            // var uniqueCourses = [...new Set(taApplicationsList.map(app => app.courseName))];
             var courseDropdown = $("#courseDropdown");
             courseNamesList.forEach(course => {
                 courseDropdown.append("<option value='" + course + "'>" + course + "</option>");
             });
-
-            // Populate unique status values in the status dropdown
+            
             var uniqueStatuses = ["Open","In-Review","Approved","Rejected"];//[...new Set(taApplicationsList.map(app => app.status))];
             var statusDropdown = $("#statusDropdown");
             uniqueStatuses.forEach(status => {
                 statusDropdown.append("<option value='" + status + "'>" + status + "</option>");
             });
-            // Function to filter and render table based on dropdown selections
             function renderTable() {
                 var selectedDepartment = $("#departmentDropdown").val();
                 var selectedCourse = $("#courseDropdown").val();
@@ -894,7 +1038,7 @@
                 tableBody.empty();
 
                 filteredApplications.forEach(function (app) {
-                    var row = "<tr><td>" + app.name + "</td><td>" + app.email + "</td><td>" + app.status + "</td><td><button class='btn btn-primary btn-sm view-application' data-toggle='modal' data-target='#applicationDetailsModal' data-application='" + JSON.stringify(app) + "'> View Application</button></td></tr>";
+                    var row = "<tr><td>" + app.applicationId + "</td><td>" + app.name + "</td><td>" + app.email + "</td><td>" + app.courseName + "</td><td>" + app.status + "</td><td><button class='btn btn-primary btn-sm view-application' data-toggle='modal' data-target='#applicationDetailsModal' data-application='" + JSON.stringify(app) + "'>View Application</button></td></tr>";
                     tableBody.append(row);
                 });
             }
@@ -928,40 +1072,63 @@
                 var modalContent = $("#applicationDetailsContent");
                 modalContent.empty();
                 var cvExtension = application.cv.split('.').pop();
+                var feedbackHtml = "";
+                if(applicationData.instructorFeedbackExists){
+                    feedbackHtml = "<h5 class='lineInmiddleH2'><span class='h2Span'>INSTRUCTOR FEEDBACK</span></h5>"+
+                    "<p><strong>Instructor Name </strong> " + applicationData.instructorFeedbackName + "</p>"+
+                    "<p><strong>Course Name </strong> " + applicationData.instructorFeedbackCourseName + "</p>"+
+                    "<p><strong>Performace Rating </strong> " + applicationData.performanceRating + "/10</p>"+
+                    "<p><strong>Technical Skill Rating </strong> " + applicationData.technicalSkillRating + "/10</p>"+
+                    "<p><strong>Communication Skill Rating </strong> " + applicationData.communicationSkillRating + "/10</p>"+
+                    "<p><strong>Overall Feedback </strong> " + applicationData.instructorOverallFeedback + "</p>";
+                }
+                var detailsHtml = ""+
+                    "<p><strong>Application Id </strong> <span id='appId'>" + applicationData.applicationId + "# </span></p>" +
+                    "<p><strong>Applicant Name </strong> <span id='applicationcontentdetailsname'>" + applicationData.name + "</span></p>" +
+                    "<p><strong>Email </strong> " + applicationData.email + "</p>" +
+                    "<p><strong>Z Number </strong> " + applicationData.znumber + "</p>" +
+                    "<p><strong>Department </strong> " + applicationData.presentDepartmentName + "</p>" +
 
-                var detailsHtml = "<p><strong>Name:</strong> <span id='applicationcontentdetailsname'>" + applicationData.name + "</span></p>" +
-                    "<p><strong>Application Id:</strong><span id='appId'>" + applicationData.applicationId + "</span></p>" +
-                    "<p><strong>Email:</strong> " + applicationData.email + "</p>" +
-                    "<p><strong>Z Number:</strong> " + applicationData.znumber + "</p>" +
-                    "<p><strong>Department:</strong> " + applicationData.departmentName + "</p>" +
-                    "<p><strong>Level of Education:</strong> " + applicationData.educationLevel + "</p>" +
-                    "<p><strong>Expected Graduation Date:</strong> " + applicationData.graduationDate + "</p>" +
-                    "<p><strong>Curriculum Vitae:</strong> <a href='uploads/" + applicationData.znumber + "."+cvExtension+"' target='_blank'>Download CV</a></p>" +
-                    "<p><strong>Previous Work Experience:</strong> " + applicationData.previousExperience + "</p>" +
-                    "<p><strong>Previous Experience (Months):</strong> " + applicationData.expDuration + " months</p>"+
-                    "<p><strong>Best Match :</strong> " + applicationData.recommended + "</p>";
+                    "<h5 class='lineInmiddleH2'><span class='h2Span'>ACADEMIC</span></h5>"+
+                    "<p><strong>Level of Education </strong> " + applicationData.educationLevel + "</p>" +
+                    "<p><strong>CGPA </strong> " + applicationData.cgpa + "</p>" +
+                    "<p><strong>Expected Graduation Date </strong> " + applicationData.graduationDate + "</p>" +
+                    "<p><strong>CV File </strong> <a href='uploads/" + applicationData.znumber + "."+cvExtension+"' target='_blank'>Download CV</a></p>" +
+                    
+                    "<h5 class='lineInmiddleH2'><span class='h2Span'>EXPERIENCE</span></h5>"+
+                    "<p><strong>Work Experience </strong> " + applicationData.previousExperience + "</p>" +
+                    "<p><strong>Experience Duration (Months) </strong> " + applicationData.expDuration + " months</p>"+
+                    "<p><strong>Experience In Course </strong> " + applicationData.expCourse + "</p>"+
+                    
+                    feedbackHtml+
+                    
+                    "<h5 class='lineInmiddleH2'><span class='h2Span'>APPLICATION DETAILS</span></h5>"+
+                    "<p><strong>TA Course </strong> " + applicationData.courseName + "</p>" +
+                    "<p><strong>TA Department </strong> " + applicationData.departmentName + "</p>" +
+                    "<p><strong>Instructor Name </strong> " + applicationData.courseInstructorName + "</p>" +
+                    "<p><strong>Admin Recommendation </strong> " + applicationData.recommended + "</p>"+
+                    "<p><strong>Application Status </strong> " + applicationData.status + "</p>";
 
                 modalContent.append(detailsHtml);
             }
 
-            // Event listener for accepting an application
             $("#recommendApplicationBtn").click(()=>{
                 var applicationData = {
                     applicationId: $("#appId").text(),
                 };
-                updateApplicationStatus(applicationData.applicationId, true);
+                updateApplicationStatus(applicationData.applicationId, true, "true");
             });
 
             $("#undoApplicationBtn").click(()=>{
                 var applicationData = {
                     applicationId: $("#appId").text(),
                 };
-                updateApplicationStatus(applicationData.applicationId, false);
+                updateApplicationStatus(applicationData.applicationId, false, "false");
             });
 
-            function updateApplicationStatus(applicationId, recommended) {
+            function updateApplicationStatus(applicationId, recommended, recommendedString) {
                 var application = taApplicationsList.find(function (app) {
-                    return app.applicationId === applicationId;
+                    return app.applicationId === applicationId && app.recommended!==recommendedString;
                 });
                 if (!!application) {
                     $.ajax({
@@ -991,7 +1158,7 @@
                         }
                     });
                 }else{
-                    alert("No application filtered!!");
+                    alert("Application status is already set to "+recommendedString);
                 }
             }
             
@@ -1011,7 +1178,6 @@
         function loadInstructorTable(list){
             var instructorTableRows = "";
             list.forEach((instructor, index)=>{
-                // console.log(instructor);
                 let val = index+1;
                 instructorTableRows+= "<tr> <th scope='row'>"+val+"</th>"+
                         "<td>"+instructor.id+"</td>"+
@@ -1047,5 +1213,74 @@
             $("#committeeTable").find('tbody').empty();
             $("#committeeTable").find('tbody').append(committeeTableRows);
         }
+        function loadCourseTable(list){
+            var coursesTableRows = "";
+            var courseNamesList=[];
+            list.forEach((course, index)=>{
+                courseNamesList.push(course.courseName);
+                let val = index+1;
+                coursesTableRows+= "<tr> <th scope='row'>"+val+"</th>"+
+                        "<td>"+course.id+"</td>"+
+                        "<td>"+course.courseName+"</td>"+
+                        "<td>"+course.departmentName+"</td>"+
+                        "<td>"+course.instructorName+"</td>"+
+                        "<td>"+course.status+"</td>"+
+                        `<td>
+                            <div class='form-check'>
+                                <input class='form-check-input courseCheckbox' type='checkbox' id='flexCheckDefault'>
+                            </div>
+                        </td>
+                      </tr>`;
+                var courseId = course.id;
+                var courseName = course.courseName;
+                $("#instructorCourseDropdown").append("<option value='"+courseId+"'>"+courseName+"</option>");
+            });
+            $("#coursesTable").find('tbody').empty();
+            $("#coursesTable").find('tbody').append(coursesTableRows);
+            return courseNamesList;
+        }
+        function loadMyListTable(list){
+            var myListTableRows = "";
+            list.forEach((app, index)=>{
+                if(app.recommended=="true" || app.recommended==true){
+                    myListTableRows+= "<tr>"+
+                                      "<td>"+app.applicationId+"</td>"+
+                                      "<td>"+app.znumber+"</td>"+
+                                      "<td>"+app.name+"</td>"+
+                                      "<td>"+app.email+"</td>"+
+                                      "<td>"+app.courseName+"</td>"+
+                                      "<td>"+app.departmentName+"</td></tr>";
+                }
+            });
+            $("#myListTable").find('tbody').empty();
+            $("#myListTable").find('tbody').append(myListTableRows);
+        }
+        function loadApprovedTAsTable(list){
+            var approvedTAsTableRows = "";
+            list.forEach((app, index)=>{
+                var val = index+1;
+                approvedTAsTableRows+= "<tr><th scope='row'>"+val+"</th>"+
+                    "<td>"+app.applicationId+"</td>"+
+                    "<td>"+app.applicantName+"</td>"+
+                    "<td>"+app.email+"</td>"+
+                    "<td>"+app.courseName+"</td>"+
+                    "<td>"+app.courseId+"</td>"+
+                    "<td>"+app.instructorId+"</td>"+
+                    "<td>"+app.offered+"</td>"+
+                    `<td>
+                          <div class='form-check'>
+                              <input class='form-check-input tasCheckbox' type='checkbox' id='flexCheckDefault'>
+                          </div>
+                    </td>
+                    </tr>`;
+            });
+            $("#approvedTAsTable").find('tbody').empty();
+            $("#approvedTAsTable").find('tbody').append(approvedTAsTableRows);
+        }
+        function logout() {
+                alert("Logging out!!");
+                document.cookie = "TAusername=na";
+                window.location.href = "login.jsp";
+            }
     </script>
 </html>

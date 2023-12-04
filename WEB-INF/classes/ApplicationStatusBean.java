@@ -4,7 +4,8 @@ import java.io.Serializable;
 public class ApplicationStatusBean implements Serializable {
 
     private int id;
-    private String departmentName, courseName, instructorName, status;
+    private String departmentName, courseName, instructorName, status, offerStatus;
+    private boolean offered;
 
     public int getId() {
         return id;
@@ -44,6 +45,22 @@ public class ApplicationStatusBean implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public boolean getOffered() {
+        return offered;
+    }
+
+    public void setOffered(boolean offer) {
+        this.offered = offer;
+    }
+
+    public void setOfferStatus(String offerStatus) {
+        this.offerStatus = offerStatus;
+    }
+
+    public String getOfferStatus() {
+        return offerStatus;
     }
     
 }

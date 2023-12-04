@@ -20,21 +20,41 @@
             crossorigin="anonymous" referrerpolicy="no-referrer" />
         <title>Home page</title>
         <style>
+            nav {
+                padding: 10px;
+                position: sticky;
+                top: 0;
+            }
+            .fa-lg{
+                line-height: 1.0em !important;
+            }
             .navbar-text {
                 cursor: pointer;
                 color: white !important;
             }
-
-            .navbar-brand {
-                color: white !important;
-            }
-
             .nav-link {
                 color: white !important;
             }
-
+            .nav-item{
+                position: relative;
+                display: inline-block;
+            }
             .navbar-brand {
                 cursor: default;
+                color: #e6e6e6 !important;
+                font-weight: 900;
+            }
+            .navbar-text {
+                cursor: pointer;
+            }
+            .navbar-brand {
+                cursor: default;
+            }
+
+            .dropdown {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
 
             .lineInmiddleH2 {
@@ -138,16 +158,32 @@
                 background-color: #533b78;
                 color:white;
             }
+            #applicationStatusScreen{
+                display: none;
+            }
+            .notificationBadge {
+                background-color: #fa3e3e;
+                border-radius: 37px;
+                color: white;
+                padding: 1px 7px;
+                font-size: 13px;
+                font-weight: bold;
+                position: absolute;
+                top: 2px;
+                right: -8px;
+                display: none;
+            }
+            #updateStatusMsg{
+                margin-left:18%;
+            }
         </style>
     </head>
 
     <body>
         <center>
-            <!-- <h1>Dashboard</h1> -->
-
             <nav class="navbar navbar-expand-lg navbar-light bg-light"
                 style="background-color:#533b78 !important;color:white !important;">
-                <a class="navbar-brand" href="#">Dashboard</a>
+                <a class="navbar-brand" href="#">Applicant Dashboard</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
                     aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -159,22 +195,23 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#" id="statusLink">Applications status</a>
+                            <span class="notificationBadge">2</span>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-toggle="modal" data-target="#profileModal"
-                                id="profileLink">Profile</a>
+                                id="profileLink"> &nbsp <i class="fa-solid fa-user fa-lg"></i></a>
                         </li>
                     </ul>
                     <span class="navbar-text">
                         <div onclick="logout()">
-                            Logout
+                            Logout <i class="fa-solid fa-right-from-bracket"></i>
                         </div>
                     </span>
                 </div>
             </nav>
 
             <br><br>
-            <div class="container" id="containerBox">
+            <div id="applicationProcessScreen" class="container" id="containerBox">
                 <div class="jumbotron" id="jumbotronBox">
                     <div id="applyScreen">
                         <h1> Application for TA's </h1><br>
@@ -273,35 +310,10 @@
                             <button type="button" class="btn btn-primary" id="submitBtn" name="submitBtn">Submit</button>
                         </form>
                     </div>
-
-
                 </div>
             </div>
 
-            <div id="applicationStatus">
-                <div style="margin:3%;">
-                    <span class="StatusHeadingText">Application Status</span>
-                </div>
-                <c:if test="${not empty applicationsList}">
-                    <c:forEach var="app" items="${applicationsList}" varStatus="loopCount">
-
-                        <div class="card text-center">
-                            <div class="card-header">
-                                #${app.id}
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title">${app.courseName}</h5>
-                                <p class="card-text">department of ${app.departmentName} and teaching assistant for
-                                    ${app.instructorName}</p>
-                                <!-- <a href="#" class="btn btn-primary">${app.status}</a> -->
-                            </div>
-                            <div class="card-footer">
-                                ${app.status}
-                            </div>
-                        </div>
-                        <br>
-                    </c:forEach>
-                </c:if>
+            <div id="applicationStatusScreen">
             </div>
 
             <!-- Profile Modal -->
@@ -311,6 +323,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="profileModalLabel">Profile</h5>
+                            <span id="updateStatusMsg"></span>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -360,10 +373,6 @@
             </div>
         </center>
         <script>
-            // $('#gradDate').datepicker({
-            //     uiLibrary: 'bootstrap5'
-            // });
-
             function logout() {
                 alert("Logging out!!");
                 document.cookie = "TAusername=na";
@@ -371,11 +380,14 @@
             }
 
             $("#homeLink").click(function () {
-                window.location.href = "applicantHome";
+                $("#applicationProcessScreen").show();
+                $("#applicationStatusScreen").hide();
             });
 
             $("#statusLink").click(function () {
-                window.location.href = "applicationStatus";
+                $("#applicationProcessScreen").hide();
+                $("#applicationStatusScreen").show();
+                $(".notificationBadge").hide();
             });
 
             function validateForm() {
@@ -455,32 +467,41 @@
                     }
                 }
 
-                var pageName = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
-                console.log("PageName: ", pageName);
-                if (pageName == "applicationStatus") {
-                    $("#applicationStatus").show();
-                    $("#containerBox").hide();
+                var applicationsList = [];
+                var offersCount = 0;
+                <c:forEach items="${applicationsList}" var="app">
+                    var application = { };
+                    application["applicationId"]="${app.id}";
+                    application["courseName"]="${app.courseName}";
+                    application["departmentName"]="${app.departmentName}";
+                    application["instructorName"]="${app.instructorName}";
+                    application["status"]="${app.status}";
+                    application["offerStatus"]="${app.offerStatus}";
+                    application["offered"]="${app.offered}";
+                    applicationsList.push(application);
+                    if(application.offered=="true" || application.offered==true){
+                        offersCount++ 
+                    }
+                </c:forEach>
+                loadApplicationStatusScreen(applicationsList, offersCount);
 
-                    $(".card-footer").each(function (i) {
-                        console.log($(this).text());
-                        if ($(this).text().trim() == "Open") {
-                            $(this).attr('style', 'color:#6c757d');
-                            $(this).append("<i class='fa-solid fa-pencil'></i>");
-                        } else if ($(this).text().trim() == "In-Review") {
-                            $(this).attr('style', 'color:orange');
-                            $(this).append('<i class="fa-solid fa-hourglass-start"></i>');
-                        } else if ($(this).text().trim() == "Approved") {
-                            $(this).attr('style', 'color:green');
-                            $(this).append('<i class="fa-solid fa-check"></i>');
-                        } else {
-                            $(this).attr('style', 'color:red');
-                            $(this).append('<i class="fa-solid fa-xmark"></i>');
-                        }
-                    })
-                }
+                $(".card-footer").each(function (i) {
+                    console.log($(this).text());
+                    if ($(this).text().trim() == "Open") {
+                        $(this).attr('style', 'color:#6c757d');
+                        $(this).append("<i class='fa-solid fa-pencil'></i>");
+                    } else if ($(this).text().trim() == "In-Review") {
+                        $(this).attr('style', 'color:orange');
+                        $(this).append('<i class="fa-solid fa-hourglass-start"></i>');
+                    } else if ($(this).text().trim() == "Approved") {
+                        $(this).attr('style', 'color:green');
+                        $(this).append('<i class="fa-solid fa-check"></i>');
+                    } else {
+                        $(this).attr('style', 'color:red');
+                        $(this).append('<i class="fa-solid fa-xmark"></i>');
+                    }
+                });
 
-
-                // Populate the course list based on the selected department
                 $("#department").change(function () {
                     var selectedDepartment = $(this).val();
                     console.log(selectedDepartment);
@@ -522,8 +543,6 @@
                     }
                 });
 
-                // $("#gradDate").attr('min', todayDate());
-
                 courseList.forEach(function (val) {
                     $("#expCourse").append("<option value='" + val + "'>" + val + "</option>");
                 });
@@ -563,48 +582,143 @@
                         alert("Form validation failed!!");
                     }
                 });
-
                 $("#updateProfile").click(function () {
                     var firstname = $("#firstname").val();
                     var lastname = $("#lastname").val();
                     var email = $("#email").val();
                     var znumber = $("#znumber").val();
                     var password = $("#password").val();
-                    $.ajax({
+                    if(firstname=="" && lastname=="" && email=="" && znumber=="" && password==""){
+                        $("#updateStatusMsg").html("No changes made to update!");
+                        sleep(1500).then(()=>{
+                            $("#updateStatusMsg").fadeOut(1500);
+                        });
+                    }else{
+                        $.ajax({
+                            type: "POST",
+                            url: "profileUpdate",
+                            data: {
+                                firstname: firstname,
+                                lastname: lastname,
+                                usertype: "applicant",
+                                email: email,
+                                znumber: znumber,
+                                password: password,
+                                oldEmail: $("#oldEmail").text(),
+                                oldZnumber: $("#oldZnumber").text()
+                            },
+                            success: function (result) {
+                                if (result == "Failed") {
+                                    $("#updateStatusMsg").html("Failed to updated! <span style='color:red'> &times; </span>");
+                                    sleep(1500).then(()=>{
+                                        $("#updateStatusMsg").fadeOut(1500);
+                                    })
+                                }
+                                else {
+                                    $("#updateStatusMsg").html("Successfully updated! <span style='color:green'> &#10004 </span>");
+                                    if (firstname != "" && firstname!=null) {
+                                        $("#firstnameLabel").text(firstname);
+                                    }
+                                    if (lastname != "" && lastname != null) {
+                                        $("#lastnameLabel").text(lastname);
+                                    }
+                                    if (password != "" && password!=null) {
+                                        $("#passwordLabel").text(password);
+                                    }
+                                    if((email!="" && email!=null)){
+                                        $("#emailLabel").text(email);
+                                        document.cookie = "TAusername=" + email;
+                                    } 
+                                    if((znumber!="" && znumber!=null)){
+                                        $("#znumberLabel").text(znumber);
+                                        document.cookie = "TAusername=" + email;
+                                    }
+                                    sleep(1500).then(()=>{
+                                        $("#updateStatusMsg").fadeOut(1500);
+                                    })
+                                }
+                            }
+                        });
+                    }
+                });
+                $(document).on('click','.acceptOffer', ()=>{
+                    // console.log($(".acceptOffer").attr("data"));
+                    acceptRejectOffer($(".declineOffer").attr("data"),'accepted');
+                });
+                $(document).on('click','.declineOffer', ()=>{
+                    // console.log($(".declineOffer").attr("data"));
+                    acceptRejectOffer($(".declineOffer").attr("data"),'declined');
+                });
+            });
+            function loadApplicationStatusScreen(list, count){
+                var htmlData = `<div style="margin:3%;">
+                    <span class="StatusHeadingText">Application Status</span>
+                    </div>`;
+                list.forEach((app)=>{
+                    var offerHtml="";
+                    if(app.offered==true || app.offered=="true"){
+                        var buttonDisbledStatus="";
+                        var offerAcceptedRejectedMsg="";
+                        if(app.offerStatus!=null && app.offerStatus=="accepted"){
+                            buttonDisbledStatus= `disabled`;
+                            offerAcceptedRejectedMsg=`<p class="card-text"> You have Accepted the offer! please contact course instructor</p>`;
+                        }
+                        if(app.offerStatus!=null && app.offerStatus=="declined"){
+                            buttonDisbledStatus="disabled";
+                            offerAcceptedRejectedMsg=`<p class="card-text"> You have Declined the offer</p>`;
+                        }
+                        offerHtml = `<p class="card-text" style='color:green'><b>Congratulations, You received TA Offer under `+app.instructorName+`!</b> 
+                            <br><br><button class="btn btn-primary acceptOffer" `+buttonDisbledStatus+` data='`+app.applicationId+`'>Accept</button>
+                            <button class="btn btn-danger declineOffer" `+buttonDisbledStatus+` data='`+app.applicationId+`'>Decline</button></p>`+
+                            offerAcceptedRejectedMsg;
+                    }else{
+                        offerHtml=`<p class="card-text" style='color:yellow'><b>Your application is approved! wait for the offer from committee</b></p>`;
+                    }
+                    htmlData+= `<div class="card text-center">
+                            <div class="card-header">
+                                #`+app.applicationId+`
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">`+app.courseName+`</h5>
+                                <p class="card-text">Department of <b>`+app.departmentName+`</b> and Teaching assistant for
+                                    <b>`+app.instructorName+`</b></p>
+                                `+offerHtml+`
+                            </div>
+                            <div class="card-footer">
+                                `+app.status+`
+                            </div>
+                        </div>
+                        <br>`;
+                });
+                $("#applicationStatusScreen").empty();
+                $("#applicationStatusScreen").html(htmlData);
+                if(count>0){
+                    $(".notificationBadge").show();
+                    $(".notificationBadge").html(count);
+                }
+            }
+            function acceptRejectOffer(id,action){
+                $.ajax({
                         type: "POST",
-                        url: "profileUpdate",
+                        url: "offerAcceptReject",
                         data: {
-                            firstname: firstname,
-                            lastname: lastname,
-                            usertype: "applicant",
-                            email: email,
-                            znumber: znumber,
-                            password: password,
-                            oldEmail: $("#oldEmail").text(),
-                            oldZnumber: $("#oldZnumber").text()
+                            action:action,
+                            applicationId:id
                         },
                         success: function (result) {
-                            if (result == "Failed") {
-                                alert("Update Failed!!");
+                            if (result == "failed") {
+                                // $("#updateStatusMsg").html("Failed to updated! <span style='color:red'> &times; </span>");
+                                // sleep(1500).then(()=>{
+                                //     $("#updateStatusMsg").fadeOut(1500);
+                                // });
+                                alert("failed");
                             }
                             else {
-                                alert("Updated Succesfully");
-                                if (firstname != "") {
-                                    $("#firstnameLabel").text(firstname);
-                                }
-                                if (lastname != "") {
-                                    $("#lastnameLabel").text(lastname);
-                                }
-
-
-                                document.cookie = "TAusername=" + email;
+                                alert("success");
                             }
                         }
                     });
-                });
-
-            });
-
+            }
             function getCookie(cname) {
                 var name = cname + "=";
                 var decodedCookie = decodeURIComponent(document.cookie);
@@ -620,7 +734,6 @@
                 }
                 return null;
             }
-
             function todayDate() {
                 var today = new Date(); // get the current date
                 var dd = today.getDate(); //get the day from today.
@@ -631,14 +744,15 @@
                 if (dd < 10) {
                     dd = '0' + dd
                 }
-
                 //like the day, do the same to month (3->03)
                 if (mm < 10) {
                     mm = '0' + mm
                 }
-
                 //finally join yyyy mm and dd with a "-" between then
                 return mm + '/' + dd + '/' + yyyy;
+            }
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
             }
         </script>
     </body>

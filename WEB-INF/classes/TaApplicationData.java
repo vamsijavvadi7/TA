@@ -3,23 +3,19 @@ import java.util.*;
 
 public class TaApplicationData implements Serializable {
 
-    private String departmentName;
-    private String courseName;
     private int taApplicationId;
     private String firstname;
     private String lastname;
     private String email;
     private String znumber;
-    private float cgpa ;
     private String presentDepartmentName;
+    private float cgpa ;
     private String educationLevel;
     private java.util.Date graduationDate;
     private String cv;
     private boolean previousExperience;
     private String expCourse;
     private int expDuration;
-    private boolean recommended;
-    private String status;
     private boolean instructorFeedbackExists;
     private String instructorFeedbackName;
     private String instructorFeedbackCourseName;
@@ -27,9 +23,11 @@ public class TaApplicationData implements Serializable {
     private int technicalSkillRating;
     private int communicationSkillRating;
     private String instructorOverallFeedback;
+    private String courseName;
+    private String departmentName;
     private String courseInstructorName;
-
-
+    private boolean recommended;
+    private String status;
 
 
     public String getCourseName() {
