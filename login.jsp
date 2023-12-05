@@ -15,7 +15,7 @@
         }
 
         label {
-            color: white;
+            color: black;
         }
 
         .form-group>input {
@@ -51,22 +51,23 @@
         .loginBtn {
             background-color: #302244 !important;
         }
+        
     </style>
 </head>
 
 <body>
     <center>
         <nav class="navbar navbar-light bg-light">
-            <div class="container-fluid" style="background-color:#533b78;">
+            <div class="container-fluid" style="background-color:#036;">
                 <span class="navbar-brand mb-0 h1" style="color:white;">SIGN IN</span>
             </div>
         </nav>
         <!-- <h1 style="margin-top:4%;color:#533b78;"></h1><br> -->
         <div class="container">
-            <div class="jumbotron" style="background-color: #a087c4;">
+            <div class="jumbotron" style="background-color: #d9ecff;">
                 <form name="login" id="loginForm">
                     <div class="form-group">
-                        <label for="username">ZNumber or Email</label>
+                        <label for="username" >ZNumber or Email</label>
                         <input type="email" class="form-control" id="username" required="true" name="username"
                             placeholder="name@example.com">
                     </div>
@@ -78,7 +79,7 @@
                     </div>
                     <!-- <input type="text" placeholder="password" id="username" required="true" name="username" /> -->
                     <div class="form-group">
-                        <label for="usertype">User type</label>
+                        <label for="usertype" >User type</label>
                         <select class="form-control" id="usertype">
                             <option value="none">-- select --</option>
                             <option value="applicant">Applicant</option>
@@ -97,16 +98,16 @@
                     <!-- <br> -->
                     <br>
                     <br>
-                    <p style="color:white;font-size: small;">
+                    <p style="color:black;font-size: small;">
                         NOTE: Please select appropriate user type in the above dropdown
                     </p>
                     <!-- <br> -->
                     <div>
-                        <a href="#register" id="registerLink">No account ? Register now</a>
+                        <a href="#register" style="color:black;" id="registerLink">No account ? Register now</a>
                     </div>
                     <br>
                     <button type="submit" name="loginBtn" class="btn btn-primary" id="loginBtn"
-                        style="background-color: #483366;color:white;">Login</button>
+                        style="background-color: #036;color:white;">Login</button>
                 </form>
             </div>
         </div>
