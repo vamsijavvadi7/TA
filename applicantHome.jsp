@@ -56,7 +56,6 @@
                 flex-direction: column;
                 align-items: center;
             }
-
             .lineInmiddleH2 {
                 width: 100%;
                 text-align: center;
@@ -64,7 +63,6 @@
                 line-height: 0.1em;
                 margin: 10px 0 20px;
             }
-
             .h2Span {
                 background: #fff;
                 padding: 0 10px;

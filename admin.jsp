@@ -263,7 +263,6 @@
                 </span>
             </div>
         </nav>
-
         <div id="applicationsContainer" class="container">
             <div class="jumbotron" id="jumbotronBox">
                 <h2 class="text-center">TA Applications</h2>
