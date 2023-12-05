@@ -88,14 +88,6 @@
                             <option value="instructor">Instructor</option>
                         </select>
                     </div>
-                    <!-- <select id="usertype" name="usertype">
-                        <option value="none"> -- select -- </option>
-                        <option value="applicant">Applicant</option>
-                        <option value="admin">Administrator</option>
-                        <option value="committee">TA Committee</option>
-                        <option value="instructor">Instructor</option>
-                    </select> -->
-                    <!-- <br> -->
                     <br>
                     <br>
                     <p style="color:black;font-size: small;">
@@ -103,7 +95,7 @@
                     </p>
                     <!-- <br> -->
                     <div>
-                        <a href="#register" style="color:black;" id="registerLink">No account ? Register now</a>
+                        <a href="#register" style="color:black;font-weight:800;" id="registerLink">No account ? Register now</a>
                     </div>
                     <br>
                     <button type="submit" name="loginBtn" class="btn btn-primary" id="loginBtn"
