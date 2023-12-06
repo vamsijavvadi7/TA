@@ -102,7 +102,7 @@
                 font-weight: 700;
                 font-size: 20px;
                 border-radius: 0px 15px 0px 15px;
-                box-shadow: inset 0px 0px 32px 12px #ad98cd;
+                box-shadow: inset 0px 0px 32px 12px #036;
                 letter-spacing: 5px;
             }
 
@@ -139,7 +139,7 @@
                 color: #6c757d !important;
             }
             #jumbotronBox{
-                background-color: #e4ddee;
+                background-color: #d9ecff;
                 border-radius:15px 15px 15px 15px;
             }
             .form-control{
@@ -155,7 +155,7 @@
                 width:50%;
             }
             #submitBtn{
-                background-color: #533b78;
+                background-color: #036;
                 color:white;
             }
             #applicationStatusScreen{
@@ -181,7 +181,7 @@
     <body>
         <center>
             <nav class="navbar navbar-expand-lg navbar-light bg-light"
-                style="background-color:#533b78 !important;color:white !important;">
+                style="background-color:#036 !important;color:white !important;">
                 <a class="navbar-brand" href="#">Applicant Dashboard</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
                     aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">

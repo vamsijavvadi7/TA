@@ -1,67 +1,91 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta name="viewport" content="width=device-width initial-scale=1">
-    <link href="css/bootstrap.css" rel="stylesheet" />
-    <meta name="viewport" content="width=device-width" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <link rel="stylesheet" type="text/css"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+  <meta name="viewport" content="width=device-width initial-scale=1">
+  <link href="css/bootstrap.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
     <style>
-        #registerLink {
-            color: white;
-        }
+          nav {
+                /* padding: 10px; */
+                position: sticky;
+                top: 0;
+            }
 
-        label {
-            color: white;
-        }
+            .navbar-text {
+                cursor: pointer;
+                color: white !important;
+            }
 
-        .form-group>input {
-            width: 60%;
-        }
+            .nav-link {
+                color: white !important;
+            }
 
-        .form-group>select {
-            width: 60%;
-        }
+            .navbar-brand {
+                cursor: default;
+                color: #e6e6e6 !important;
+                font-weight: 900;
+            }
 
-        .jumbotron {
-            width: 70%;
-            padding-top: 3%;
-            padding-bottom: 3%;
-            border-radius: 30px;
-        }
+            .dropdown {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
 
-        .container {
-            border-radius: 5%;
-        }
+            label {
+            color: black;
+            }
+          
+            .form-group>input {
+                width: 60%;
+            }
+          
+            .form-group>select {
+                width: 60%;
+            }
+            .form-control{
+              text-align:Center;
+            }
+          
+            .jumbotron {
+                width: 70%;
+                padding-top: 3%;
+                padding-bottom: 3%;
+                border-radius: 30px;
+            }
+          
+            .container {
+                border-radius: 5%;
+            }
+          
+            .container-fluid {
+                /* height:20%; */
+                padding: 1.5% 2%;
+            }
 
-        .container-fluid {
-            /* height:20%; */
-            padding: 1.5% 2%;
-        }
-
-        .navbar {
+          .navbar {
             width: 100%;
             padding: 0%;
             margin-bottom: 3%;
-        }
-
-        .loginBtn {
-            background-color: #302244 !important;
-        }
+          }
+          #registerBtn{
+            background-color: #036 !important;
+          }
     </style>
 </head>
 <body>
-    <center>
-        <nav class="navbar navbar-light bg-light">
-            <div class="container-fluid" style="background-color:#533b78;">
-                <span class="navbar-brand mb-0 h1" style="color:white;">SIGN UP</span>
-            </div>
-        </nav>
+  <nav class="navbar navbar-light bg-light">
+    <div class="container-fluid" style="background-color:#036;">
+      <span class="navbar-brand mb-0 h1" style="color:white;">SIGN UP</span>
+    </div>
+  </nav>
+  <center>
         <div class="container">
-            <div class="jumbotron" style="background-color: #a087c4;">
+            <div class="jumbotron" style="background-color: #d9ecff;">
                 <form name="register" id="registerForm" method="get">
                   <div class="form-group">
                     <input class="form-control" placeholder="Enter your firstname" required="true" name="firstname" type="text"
@@ -86,11 +110,11 @@
                   </div>
                   <br>
                   <div>
-                      <a href="#login" id="loginLink" style="color:white;"><b>Already have an account? Login here</b></a>
+                      <a href="#login" id="loginLink" style="color:black;"><b>Already have an account? Login here</b></a>
                   </div>
                   <br>
                   <button type="submit" name="registerBtn" class="btn btn-primary registerBtn" id="registerBtn"
-                        style="background-color: #483366;color:white;">Register</button>
+                        style="color:white;">Register</button>
                 </form>
             </div>
         </div>
