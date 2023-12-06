@@ -11,7 +11,7 @@ public class AdminHome extends HttpServlet{
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException { 
 	    try {
 		    Class.forName("com.mysql.jdbc.Driver");
-		    Connection connObject = DriverManager.getConnection("jdbc:mysql://10.0.0.224:3306/ta", "ta", "root");
+		    Connection connObject = DriverManager.getConnection("jdbc:mysql://127.8.9.0:3306/ta", "ta", "root");
 		    PrintWriter printWriter = res.getWriter();
             Cookie[] cookies = req.getCookies();
             if (connObject != null) {
@@ -88,14 +88,15 @@ public class AdminHome extends HttpServlet{
                 } else {
                     String instructorFeedbackQuery="SELECT instructor_feedback.*, course.course_name FROM instructor_feedback, course WHERE instructor_feedback.id='"+instructorFeedbackId+"' AND instructor_feedback.course_id=course.id";
                     feedbackResultSet = feedbackStatement.executeQuery(instructorFeedbackQuery);
-                    feedbackResultSet.next();
-                    application.setInstructorFeedbackExists(true);
-                    application.setInstructorFeedbackName(feedbackResultSet.getString("instructor_name"));
-                    application.setInstructorFeedbackCourseName(feedbackResultSet.getString("course_name"));
-                    application.setPerformanceRating(feedbackResultSet.getInt("performance_rating"));
-                    application.setTechnicalSkillRating(feedbackResultSet.getInt("technical_skill"));
-                    application.setCommunicationSkillRating(feedbackResultSet.getInt("communication_skill"));
-                    application.setInstructorOverallFeedback(feedbackResultSet.getString("overall_feedback"));
+                    if(feedbackResultSet.next()){
+                        application.setInstructorFeedbackExists(true);
+                        application.setInstructorFeedbackName(feedbackResultSet.getString("instructor_name"));
+                        application.setInstructorFeedbackCourseName(feedbackResultSet.getString("course_name"));
+                        application.setPerformanceRating(feedbackResultSet.getInt("performance_rating"));
+                        application.setTechnicalSkillRating(feedbackResultSet.getInt("technical_skill"));
+                        application.setCommunicationSkillRating(feedbackResultSet.getInt("communication_skill"));
+                        application.setInstructorOverallFeedback(feedbackResultSet.getString("overall_feedback"));
+                    }
                 }
                 application.setDepartmentName(applicationsResultSet.getString("selected_department_name"));
                 application.setCourseName(applicationsResultSet.getString("course_name"));

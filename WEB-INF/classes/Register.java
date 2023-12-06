@@ -9,7 +9,7 @@ public class Register extends HttpServlet {
 
         try {
             Class.forName("com.mysql.jdbc.Driver");// postgresql.org.postgresql.Driver
-            Connection conObject = DriverManager.getConnection("jdbc:mysql://10.0.0.224:3306/ta", "ta", "root");// postgresql://localhost:5433/
+            Connection conObject = DriverManager.getConnection("jdbc:mysql://127.8.9.0:3306/ta", "ta", "root");// postgresql://localhost:5433/
             PrintWriter printWriter = res.getWriter();
             ResultSet resultSet = null;
             if (conObject != null) {
