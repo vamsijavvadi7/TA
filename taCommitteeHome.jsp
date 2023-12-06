@@ -84,7 +84,7 @@
             }
 
             #jumbotronBox {
-                background-color: #e4ddee;
+                background-color: #d9ecff;
                 border-radius: 15px 15px 15px 15px;
                 padding: 4rem 2rem;
             }
@@ -134,7 +134,8 @@
                 z-index: 1000;
             }
             #applyFilters{
-                background-color: #533b78;
+                background-color: #036;
+
                 color:white;
             }
 
@@ -204,7 +205,8 @@
                 display: block;
             }
             #applicationDetailsContent p{
-                background-color: #8465b3;
+                background-color: #036
+;
                 margin-bottom:5px;
                 padding:3px;
                 color:white;
@@ -214,7 +216,7 @@
                 color:white;
             }
             #applicationDetailsContent strong{
-                color:#533b78;
+                color:#036;
                 background-color: white;
                 border-radius:10px;
                 padding:1px 10px;
@@ -228,7 +230,7 @@
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-light"
-            style="background-color:#533b78 !important;color:white !important;padding: 10px 20px;">
+            style="background-color:#036 !important;color:white !important;padding: 10px 20px;">
             <a class="navbar-brand" >Committee Dashboard</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
