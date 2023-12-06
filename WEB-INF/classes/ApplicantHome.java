@@ -37,7 +37,7 @@ public class ApplicantHome extends HttpServlet{
                         req.setAttribute("username", username);
                         req.setAttribute("departmentList", getDepartmentList(connObject));
                         req.setAttribute("courseList", getCourseList(connObject));
-                        req.setAttribute("applicationsList", getApplicationStatus(connObject,userResultSet.getInt("id")));
+                        req.setAttribute("applicationsList", getApplicationStatus(connObject, userResultSet.getInt("id")));
                         req.getRequestDispatcher("/applicantHome.jsp").forward(req, res);
                     }else{
                         req.getRequestDispatcher("/login.jsp").forward(req, res);
@@ -100,12 +100,14 @@ public class ApplicantHome extends HttpServlet{
             while(courseResultSet.next())
     		{
                 courseData = new CourseData();
-                int course_id = courseResultSet.getInt("id");
-                int department_id = courseResultSet.getInt("department_id");
+                int courseId = courseResultSet.getInt("id");
+                int departmentId = courseResultSet.getInt("department_id");
+                int instructorId = courseResultSet.getInt("instructor_id");
 
-                courseData.setCourseId(course_id);
+                courseData.setCourseId(courseId);
                 courseData.setCourseName(courseResultSet.getString("course_name"));
-                courseData.setDepartmentId(department_id);
+                courseData.setDepartmentId(departmentId);
+                courseData.setInstructorId(instructorId);
                 CourseList.add(courseData);
             }
 
@@ -118,11 +120,10 @@ public class ApplicantHome extends HttpServlet{
     }
 
     public List<ApplicationStatusBean> getApplicationStatus(Connection connObject, int applicantId){
-        String sqlQuery = "SELECT app.*, department.department_name, course.course_name, tas.offer_status, "+
+        String sqlQuery = "SELECT app.*, department.department_name, course.course_name, "+
         "instructor.firstname as instructorFirstname, instructor.lastname as instructorLastname "+
-        "FROM ta_application as app, department, course, instructor, tas WHERE app.ta_applicant_id='" + applicantId +
-        "' AND app.course_id=course.id AND app.department_id=department.id AND app.instructor_id=instructor.id "+
-        "AND app.id=tas.ta_application_id";
+        "FROM ta_application as app, department, course, instructor WHERE app.ta_applicant_id='" + applicantId +
+        "' AND app.course_id=course.id AND app.department_id=department.id AND app.instructor_id=instructor.id ";
         Statement applicationStatement=null;
         ResultSet applicationsResultSet=null;
         List<ApplicationStatusBean>  applicationsList = new ArrayList<ApplicationStatusBean>();
@@ -130,18 +131,19 @@ public class ApplicantHome extends HttpServlet{
             applicationStatement = connObject.createStatement();
             applicationsResultSet = applicationStatement.executeQuery(sqlQuery);
             while(applicationsResultSet.next()){
-                boolean offerSet = false;
-                System.out.println("Application Id: "+applicationsResultSet.getInt("id"));
+                boolean offerSent = false;
+                String offerStatus="";
                 if(applicationsResultSet.getString("status").equals("Approved")){
                     Statement tasStatement = connObject.createStatement();
                     ResultSet tasResultSet = tasStatement.executeQuery("SELECT * FROM tas WHERE ta_application_id='"+applicationsResultSet.getInt("id")+"'");
                     if(tasResultSet.next()){
-                        offerSet = tasResultSet.getBoolean("offer_sent");
+                        offerSent = tasResultSet.getBoolean("offer_sent");
+                        offerStatus = tasResultSet.getString("offer_status");
                     }else{
-                        offerSet = false;
+                        offerSent = false;
                     }
                 }else{
-                    offerSet = false;
+                    offerSent = false;
                 }
                 ApplicationStatusBean app = new ApplicationStatusBean();
                 app.setId(applicationsResultSet.getInt("id"));
@@ -149,8 +151,8 @@ public class ApplicantHome extends HttpServlet{
                 app.setCourseName(applicationsResultSet.getString("course_name"));
                 app.setInstructorName(applicationsResultSet.getString("instructorFirstname")+" "+applicationsResultSet.getString("instructorLastname"));
                 app.setStatus(applicationsResultSet.getString("status"));
-                app.setOfferStatus(applicationsResultSet.getString("offer_status"));
-                app.setOffered(offerSet);
+                app.setOfferStatus(offerStatus);
+                app.setOffered(offerSent);
                 applicationsList.add(app);
             }
         }catch (Exception e) {

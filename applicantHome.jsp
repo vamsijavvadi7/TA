@@ -178,7 +178,6 @@
             }
         </style>
     </head>
-
     <body>
         <center>
             <nav class="navbar navbar-expand-lg navbar-light bg-light"
@@ -316,7 +315,6 @@
             <div id="applicationStatusScreen">
             </div>
 
-            <!-- Profile Modal -->
             <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -329,7 +327,6 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <!-- Profile form with editable fields -->
                             <form id="profileForm">
                                 <div class="form-group">
                                     <label for="firstname" id="firstnameLabel">${firstname}</label>
@@ -342,16 +339,16 @@
                                         placeholder="Update your lastname">
                                 </div>
                                 <div class="form-group">
-                                    <label for="email" id="oldEmail">${email}</label>
+                                    <label for="email" id="emailLabel">${email}</label>
                                     <input type="email" class="form-control" id="email" placeholder="Update your email">
                                 </div>
                                 <div class="form-group">
-                                    <label for="znumber" id="oldZnumber">${znumber}</label>
+                                    <label for="znumber" id="znumberLabel">${znumber}</label>
                                     <input type="text" class="form-control" id="znumber"
                                         placeholder="Update your Znumber">
                                 </div>
                                 <div class="form-group">
-                                    <label for="password">********</label>
+                                    <label for="password" id="passwordLabel">${password}</label>
                                     <input type="password" class="form-control" id="password"
                                         placeholder="Enter your new password">
                                 </div>
@@ -436,7 +433,6 @@
                     return false; 
                 }
 
-                /** Adding course and department values to the form */
                 var departmentElement = $("<input>").attr({ "type": "hidden", "name": "department" }).val($("#department").val());
                 var courseElement = $("<input>").attr({ "type": "hidden", "name": "course" }).val($("#course").val());
                 $('#applicationForm').append($(departmentElement));
@@ -449,6 +445,17 @@
                 var courses = {};
                 var courseIds = {};
                 var courseList = [];
+                var courseListAll = [];
+
+                <c:forEach items="${courseList}" var="course">
+                    var course = { };
+                    course["courseId"]="${course.courseId}";
+                    course["courseName"]="${course.courseName}";
+                    course["departmentId"]="${course.departmentId}";
+                    course["instructorId"]="${course.instructorName}";
+                    courseListAll.push(course);
+                </c:forEach>
+
                 for (var i = 0; i < $(".hiddenData").length; i++) {
                     let deptId = $(".hiddenData").eq(i).attr('deptId');
                     let courseName = $(".hiddenData").eq(i).val();
@@ -483,6 +490,7 @@
                         offersCount++ 
                     }
                 </c:forEach>
+                console.log(applicationsList);
                 loadApplicationStatusScreen(applicationsList, offersCount);
 
                 $(".card-footer").each(function (i) {
@@ -550,9 +558,10 @@
                 $("#submitBtn").click(function () {
                     if (validateForm()) {
                         console.log("Submit clicked!!");
-                        var cgpa = $("#cgpa").val();
-                        console.log("CGPA : ", cgpa)
-                        $("<input />").attr({ "type": "hidden", "value": $("#cgpa").val(), "name": "extraCgpa" }).appendTo("#applicationForm");
+                        console.log("CourseId : ", $("#course").val());
+                        var courseId = $("#course").val();
+                        // var instructorId = courseListAll.find((course)=>{ course.courseId==});
+                        // $("<input />").attr({ "type": "hidden", "value": $("#").val(), "name": "extraCgpa" }).appendTo("#applicationForm");
 
                         var form = $('#applicationForm')[0];
                         var formData = new FormData(form);
@@ -570,9 +579,12 @@
                                     $("#applicationScreen").hide();
                                     $("#applyScreen").show();
                                     $("#container").hide();
-                                    window.location.href = "applicationStatus";
+                                    $("#applicationProcessScreen").fadeOut(1000);
+                                    $("#applicationStatusScreen").fadeIn(1000);
+                                    alert(result);
+                                }else{
+                                    alert("Failed! "+result);
                                 }
-                                alert(result);
                             },
                             error: function (err) {
                                 alert("ERROR: ", err);
@@ -582,6 +594,7 @@
                         alert("Form validation failed!!");
                     }
                 });
+
                 $("#updateProfile").click(function () {
                     var firstname = $("#firstname").val();
                     var lastname = $("#lastname").val();
@@ -604,15 +617,17 @@
                                 email: email,
                                 znumber: znumber,
                                 password: password,
-                                oldEmail: $("#oldEmail").text(),
-                                oldZnumber: $("#oldZnumber").text()
+                                oldEmail: $("#emailLabel").text(),
+                                oldZnumber: $("#znumberLabel").text()
                             },
                             success: function (result) {
-                                if (result == "Failed") {
+                                if (result == "failed") {
                                     $("#updateStatusMsg").html("Failed to updated! <span style='color:red'> &times; </span>");
-                                    sleep(1500).then(()=>{
-                                        $("#updateStatusMsg").fadeOut(1500);
-                                    })
+                                    $("#updateStatusMsg").fadeIn(1500);
+                                }
+                                else if(result=="duplicate"){
+                                    $("#updateStatusMsg").html("Email or Znumber already exists! <span style='color:red'> &times; </span>");
+                                    $("#updateStatusMsg").fadeIn(1500);
                                 }
                                 else {
                                     $("#updateStatusMsg").html("Successfully updated! <span style='color:green'> &#10004 </span>");
@@ -631,22 +646,22 @@
                                     } 
                                     if((znumber!="" && znumber!=null)){
                                         $("#znumberLabel").text(znumber);
-                                        document.cookie = "TAusername=" + email;
+                                        document.cookie = "TAusername=" + oldEmail;
                                     }
-                                    sleep(1500).then(()=>{
-                                        $("#updateStatusMsg").fadeOut(1500);
-                                    })
                                 }
+                                sleep(1500).then(()=>{
+                                    $("#updateStatusMsg").fadeOut(1500);
+                                });
                             }
                         });
                     }
                 });
+
                 $(document).on('click','.acceptOffer', ()=>{
-                    // console.log($(".acceptOffer").attr("data"));
                     acceptRejectOffer($(".declineOffer").attr("data"),'accepted');
                 });
+                
                 $(document).on('click','.declineOffer', ()=>{
-                    // console.log($(".declineOffer").attr("data"));
                     acceptRejectOffer($(".declineOffer").attr("data"),'declined');
                 });
             });
@@ -656,7 +671,8 @@
                     </div>`;
                 list.forEach((app)=>{
                     var offerHtml="";
-                    if(app.offered==true || app.offered=="true"){
+                    console.log(app.offered);
+                    if((app.offered==true || app.offered=="true") && app.status=="Approved"){
                         var buttonDisbledStatus="";
                         var offerAcceptedRejectedMsg="";
                         if(app.offerStatus!=null && app.offerStatus=="accepted"){
@@ -672,7 +688,9 @@
                             <button class="btn btn-danger declineOffer" `+buttonDisbledStatus+` data='`+app.applicationId+`'>Decline</button></p>`+
                             offerAcceptedRejectedMsg;
                     }else{
-                        offerHtml=`<p class="card-text" style='color:yellow'><b>Your application is approved! wait for the offer from committee</b></p>`;
+                        if(app.status=="Approved"){
+                            offerHtml=`<p class="card-text" style='color:yellow'><b>Your application is approved! wait for the offer from committee</b></p>`;
+                        }
                     }
                     htmlData+= `<div class="card text-center">
                             <div class="card-header">
@@ -707,10 +725,6 @@
                         },
                         success: function (result) {
                             if (result == "failed") {
-                                // $("#updateStatusMsg").html("Failed to updated! <span style='color:red'> &times; </span>");
-                                // sleep(1500).then(()=>{
-                                //     $("#updateStatusMsg").fadeOut(1500);
-                                // });
                                 alert("failed");
                             }
                             else {

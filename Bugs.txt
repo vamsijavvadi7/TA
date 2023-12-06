@@ -1,0 +1,19 @@
+3RD EDITION OF ERRORS
+
+#Instructor
+1.After login, instructor page is not coming
+
+#Administrator
+1.I tried to remove the committee members, I removed one committee member, It removed successfully, But after adding new committee member, previously deleted commited member is also coming on display page.but after refreshing it is displaying right
+2.same is happening with the adding and removing of instructor in manage instructor page.
+3.In manage courses after adding the new course it is not displaying
+4.After I recommended the applicant, it is not immediately displaying in my list, after refreshing the site, it is displaying.
+5.same with the undoing the recommendation.
+6.when I tried to send notifications to approved TA i.e vamsi, it is not sending successfully.
+7. when I try update all are updating successfully in database but the problem is it is not updating immediately on the ui, after refresh, it is showing on ui.
+
+#TA committee
+1.In Approved TAs, there is so much space between table and jumbotron top.
+
+#TA Applicant
+1.when vamsi applicant tried for new application to a course, it is not taking the application, it showing a popup failed.

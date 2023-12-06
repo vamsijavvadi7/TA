@@ -70,13 +70,11 @@
                         <input type="email" class="form-control" id="username" required="true" name="username"
                             placeholder="name@example.com">
                     </div>
-                    <!-- <input type="text" placeholder="znumber or email" id="username" required="true" name="username" /> -->
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password" required="true" name="password"
                             placeholder="password">
                     </div>
-                    <!-- <input type="text" placeholder="password" id="username" required="true" name="username" /> -->
                     <div class="form-group">
                         <label for="usertype">User type</label>
                         <select class="form-control" id="usertype">
@@ -87,14 +85,6 @@
                             <option value="instructor">Instructor</option>
                         </select>
                     </div>
-                    <!-- <select id="usertype" name="usertype">
-                        <option value="none"> -- select -- </option>
-                        <option value="applicant">Applicant</option>
-                        <option value="admin">Administrator</option>
-                        <option value="committee">TA Committee</option>
-                        <option value="instructor">Instructor</option>
-                    </select> -->
-                    <!-- <br> -->
                     <br>
                     <br>
                     <p style="color:white;font-size: small;">

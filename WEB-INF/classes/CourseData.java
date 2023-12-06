@@ -8,6 +8,7 @@ public class CourseData implements Serializable {
     private int departmentId;
     private String departmentName;
     private boolean status;
+    private int instructorId;
     private String instructorName;
 
 
@@ -61,6 +62,14 @@ public class CourseData implements Serializable {
     // Getter for 'instructorName'
     public String getInstructorName() {
         return instructorName;
+    }
+
+    public int getInstructorId() {
+        return instructorId;
+    }
+
+    public void setInstructorId(int id) {
+        this.instructorId = id;
     }
     
 }

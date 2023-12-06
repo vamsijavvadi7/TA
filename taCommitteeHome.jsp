@@ -140,7 +140,6 @@
 
             .filter-icon {
                 cursor: pointer;
-                /* position: fixed; */
                 top: 20px;
                 font-size: 1.5em;
                 z-index: 1000;
@@ -164,7 +163,7 @@
             }
             .my-custom-scrollbar {
                 position: relative;
-                /* height: 60%; */
+                height: 60%;
                 overflow: auto;
             }
             .table-wrapper-scroll-y {
@@ -221,6 +220,9 @@
                 padding:1px 10px;
                 margin-right:5px;
             }
+            #updateStatusMsg{
+                margin-left:18%;
+            }
 
         </style>
     </head>
@@ -256,7 +258,7 @@
             <div class="jumbotron" id="jumbotronBox">
                 <h2 class="text-center">TA Applications</h2>
                 <center>
-                    <div class="table-wrapper-scroll-y my-custom-scrollbar"></div>
+                    <div class="table-wrapper-scroll-y my-custom-scrollbar">
                         <table class="table table-striped" id="applicationsTable">
                             <thead>
                                 <tr>
@@ -328,6 +330,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="profileModalLabel">Profile</h5>
+                        <span id="updateStatusMsg"></span>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -345,11 +348,11 @@
                                     placeholder="Update your lastname" />
                             </div>
                             <div class="form-group">
-                                <label for="email" id="oldEmail">${email}</label>
+                                <label for="email" id="emailLabel">${email}</label>
                                 <input type="email" class="form-control" id="email" placeholder="Update your email" />
                             </div>
                             <div class="form-group">
-                                <label for="password">${password}</label>
+                                <label for="password" id="passwordLabel">${password}</label>
                                 <input type="password" class="form-control" id="password"
                                     placeholder="Enter your new password" />
                             </div>
@@ -517,17 +520,6 @@
             renderTable();
             loadApprovedTAsTable(approvedTAsList);
 
-            $("#saveProfile").click(function () {
-                var name = $("#name").val();
-                var email = $("#email").val();
-                var znumber = $("#znumber").val();
-                var address = $("#address").val();
-                // You can send this data to your server for saving or perform any other action as needed.
-                // For now, we'll just display an alert with the data.
-                alert("Name: " + name + "\nEmail: " + email + "\nZ Number: " + znumber + "\nAddress: " + address);
-                $("#profileModal").modal("hide");
-            });
-
             $(document).on("click", ".view-application", function () {
                 var applicationData = $(this).data("application");
                 renderApplicationDetails(applicationData);
@@ -548,7 +540,7 @@
                     "<p><strong>Overall Feedback </strong> " + applicationData.instructorOverallFeedback + "</p>";
                 }
                 var detailsHtml = ""+
-                    "<p><strong>Application Id </strong> <span id='appId'>" + applicationData.applicationId + "# </span></p>" +
+                    "<p><strong>Application Id </strong> <span id='appId'>" + applicationData.applicationId + "</span></p>" +
                     "<p><strong>Applicant Name </strong> <span id='applicationcontentdetailsname'>" + applicationData.name + "</span></p>" +
                     "<p><strong>Email </strong> " + applicationData.email + "</p>" +
                     "<p><strong>Z Number </strong> " + applicationData.znumber + "</p>" +
@@ -592,19 +584,21 @@
 
             $(document).on("click", ".updateStatusBtn", function () {
                 var status = $(this).data("application");
+                var buttonValue = $("#statusValue").html();
                 var applicationData = {
                     applicationId: $("#appId").text()
                 };
-                if(status!=$("#statusValue")){
-                    updateApplicationStatus(applicationData.applicationId, status);
+                console.log(applicationData);
+                if(status==buttonValue){
+                    alert("Application already " + status);
                 }else{
-                    alert("Application already "+status);
+                    updateApplicationStatus(applicationData.applicationId, status);
                 }
             });
 
             function updateApplicationStatus(applicationId, applicationStatus) {
                 var application = taApplicationsList.find(function (app) {
-                    return app.applicationId === applicationId ;
+                    return app.applicationId == applicationId ;
                 });
                 if (!!application) {
                     $.ajax({
@@ -621,7 +615,6 @@
                                 $("#updateMsg").html("Application status updated successfully! <span style='color:green'> &#10004 </span>");
                                 renderApplicationDetails(application);
                                 renderTable();
-                                // loadApprovedTAsTable(taApplicationsList);
                                 sleep(3000).then(()=>{
                                     $("#updateMsg").empty();
                                     $("#applicationDetailsModal").modal("hide");
@@ -635,7 +628,7 @@
                         }
                     });
                 }else{
-                    alert("Application status is already "+applicationStatus);
+                    alert("ApplicationId '"+applicationId+"' not found!");
                 }
             }
 
@@ -663,38 +656,55 @@
                 var lastname = $("#lastname").val();
                 var email = $("#email").val();
                 var password = $("#password").val();
-                // alert(firstname, lastname, email, password);
-                $.ajax({
-                    type: "POST",
-                    url: "profileUpdate",
-                    data: {
-                        firstname: firstname,
-                        lastname: lastname,
-                        usertype: "committee",
-                        newEmail: email,
-                        password: password,
-                        oldEmail: $("#oldEmail").text()
-                    },
-                    success: function (result) {
-                        if (result == "failed") {
-                            alert("Failed to update profile!");
+                var oldEmail = $("#emailLabel").text();
+                if(firstname=="" && lastname=="" && email=="" && password==""){
+                    $("#updateStatusMsg").html("No changes made to update!");
+                    sleep(1500).then(()=>{
+                        $("#updateStatusMsg").fadeOut(1500);
+                    });
+                }else{
+                    $.ajax({
+                        type: "POST",
+                        url: "profileUpdate",
+                        data: {
+                            firstname: firstname,
+                            lastname: lastname,
+                            usertype: "committee",
+                            email: email,
+                            password: password,
+                            oldEmail: oldEmail
+                        },
+                        success: function (result) {
+                            if(result == "failed") {
+                                $("#updateStatusMsg").html("Failed to update! <span style='color:red'> &times; </span>");
+                                $("#updateStatusMsg").fadeIn(1500);
+                            }
+                            else if(result == "success"){
+                                $("#updateStatusMsg").html("Successfully updated! <span style='color:green'> &#10004 </span>");
+                                $("#updateStatusMsg").fadeIn(1500);
+                                if (firstname != "" && firstname!=null) {
+                                    $("#firstnameLabel").text(firstname);
+                                }
+                                if (lastname != "" && lastname!=null) {
+                                    $("#lastnameLabel").text(lastname);
+                                }
+                                if(email!=null && email!=""){
+                                    $("#emailLabel").text(email);
+                                    document.cookie = "TAusername=" + email;
+                                }
+                                if(password!=null && password!=""){
+                                    $("#passwordLabel").text(password);
+                                }
+                            }else{
+                                $("#updateStatusMsg").fadeIn(1500);
+                                $("#updateStatusMsg").html("Email already exists! <span style='color:red'> &times; </span>");
+                            }
+                            sleep(1500).then(()=>{
+                                $("#updateStatusMsg").fadeOut(1500);
+                            });
                         }
-                        else if(result == "success"){
-                            alert("Updated Succesfully");
-                            if (firstname != "") {
-                                $("#firstnameLabel").text(firstname);
-                            }
-                            if (lastname != "") {
-                                $("#lastnameLabel").text(lastname);
-                            }
-                            if(email!=null && email!=""){
-                                document.cookie = "TAusername=" + email;
-                            }
-                        }else{
-                            alert("No changes made to update");
-                        }
-                    }
-                });
+                    });
+                }
             });
         });
         function logout() {

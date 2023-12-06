@@ -28,7 +28,6 @@ public class AddRemoveInstructor extends HttpServlet{
                           usertype = cookies[i].getValue();
                       }
                 }
-
                 /** Redirecting to their respective pages for other users */
                 if(username.equals("none")) {
                     req.getRequestDispatcher("/login.jsp").forward(req, res);
@@ -37,24 +36,17 @@ public class AddRemoveInstructor extends HttpServlet{
                 } else if(usertype.equals("instructor")) {
                     req.getRequestDispatcher("/instructorHome.jsp").forward(req, res);
                 } else {
-
                     String action = req.getParameter("action");
                     if(action.equals("add")){
                         String name = req.getParameter("name");
                         String email = req.getParameter("email");
                         String password = req.getParameter("password");
-                        int courseId = Integer.parseInt(req.getParameter("courseId"));
-                        String courseName = req.getParameter("courseName");
-                        int departmentId = Integer.parseInt(req.getParameter("departmentId"));
 
-                        String query = "INSERT INTO instructor (email, password, firstname, coursename, course_id, department_id) VALUES(?,?,?,?,?,?)";
+                        String query = "INSERT INTO instructor (email, password, firstname) VALUES(?,?,?)";
                         PreparedStatement addInstructorPS = connObject.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
                         addInstructorPS.setString(1,email);
                         addInstructorPS.setString(2,password);
                         addInstructorPS.setString(3,name);
-                        addInstructorPS.setString(4,courseName);
-                        addInstructorPS.setInt(5,courseId);
-                        addInstructorPS.setInt(6,departmentId);
                         int updatedRows = addInstructorPS.executeUpdate();
                         if(updatedRows==1){
                             ResultSet generatedKeys = addInstructorPS.getGeneratedKeys();
