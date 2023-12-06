@@ -104,6 +104,7 @@
                 border-radius: 0px 15px 0px 15px;
                 box-shadow: inset 0px 0px 32px 12px #036;
                 letter-spacing: 5px;
+                color:white;
             }
 
             .statusJumbotron {

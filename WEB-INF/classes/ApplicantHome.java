@@ -68,7 +68,7 @@ public class ApplicantHome extends HttpServlet{
         try 
         {
     		st1 = connObject.createStatement();
-            departmentResultSet = st1.executeQuery("SELECT * FROM department;");
+            departmentResultSet = st1.executeQuery("SELECT * FROM department where id !=0;");
             while(departmentResultSet.next())
     		{
                 DepartmentData = new DepartmentData();

@@ -139,6 +139,7 @@
             table{
                 width:95% !important;
                 border-radius:10px;
+                text-align:center;
             }
             thead{
                 position:sticky;
@@ -388,21 +389,13 @@
                     <center>
                         <form id="instructorForm" name="instructorForm" method="POST">
                             <div class="form-group">
-                                <!-- <label for="instructorName">Name:</label> -->
                                 <input type="text" class="form-control" id="instructorName" name="instructorName" placeholder="Enter new instructor name" required>
                             </div>
                             <div class="form-group">
-                                <!-- <label for="instructorName">Name:</label> -->
                                 <input type="email" class="form-control" id="instructorEmail" name="instructorEmail" placeholder="Enter instructor Email" required>
                             </div>
                             <div class="form-group">
-                                <!-- <label for="instructorName">Name:</label> -->
                                 <input type="password" class="form-control" id="instructorPassword" name="instructorPassword" placeholder="Enter password" required>
-                            </div>
-                            <div class="form-group" >
-                                <select class="form-control" id="instructorCourseDropdown" >
-                                    <option value="0">--- select instructor course ---</option>
-                                </select>
                             </div>
                             <button class="btn btn-primary" id="addInstructorbtn">Add</button>
                         </form>
@@ -862,9 +855,6 @@
                 var name = $("#instructorName").val();
                 var email = $("#instructorEmail").val();
                 var password = $("#instructorPassword").val();
-                var courseId = $("#instructorCourseDropdown").val();
-                console.log("courseId: ", courseId);
-                console.log("", course);
                 var courseName = null;
                 var departmentId = null;
                 var departmentName = null;
@@ -890,7 +880,7 @@
                                 instructor["email"]=email;
                                 console.log("Instructor object after creation : ", instructor);
                                 instructorsList.push(instructor);
-                                alert("Instructor added successfully!");
+                                alert("Instructor added successfully! course will be assigned later.");
                                 loadInstructorTable(instructorsList);
                                 
                             }else{
@@ -1021,7 +1011,7 @@
                         },
                     success: function (result) {
                         if (result == "success") {
-                            alert("Offers sent succesfully!")
+                            alert("Offers sent succesfully! refresh the page to update status");
                         }else{
                             alert("Failed to send offers");
                         }

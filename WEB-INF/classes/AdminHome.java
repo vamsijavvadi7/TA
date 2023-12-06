@@ -150,7 +150,7 @@ public class AdminHome extends HttpServlet{
                 course.setStatus(courseResultSet.getBoolean("status"));
                 course.setDepartmentId(courseResultSet.getInt("department_id"));
                 String lastname = courseResultSet.getString("lastname");
-                if(lastname.equals("null") || lastname==null)
+                if(lastname==null)
                 {
                     lastname = "";
                 }
@@ -161,6 +161,7 @@ public class AdminHome extends HttpServlet{
             e.printStackTrace();    
         }
         System.out.println("==== In getCourseList Method End ==== ");
+        System.out.println("Course list length : "+courseList.size());
         return courseList;
     }
 
@@ -183,7 +184,7 @@ public class AdminHome extends HttpServlet{
                 instructor.setId(instructorResultSet.getInt("id"));
                 instructor.setEmail(instructorResultSet.getString("email"));
                 String lastname = instructorResultSet.getString("lastname");
-                if(lastname.equals("null") || lastname==null)
+                if(lastname==null)
                 {
                     lastname = "";
                 }
