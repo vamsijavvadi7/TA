@@ -17,7 +17,7 @@ public class ApplicationForm extends HttpServlet{
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException { 
 	    try {
 		    Class.forName("com.mysql.jdbc.Driver");
-		    Connection connObject = DriverManager.getConnection("jdbc:mysql://10.0.0.224:3306/ta", "ta", "root");
+		    Connection connObject = DriverManager.getConnection("jdbc:mysql://127.8.9.0:3306/ta", "ta", "root");
 		    PrintWriter printWriter = res.getWriter();
             Cookie[] cookies = req.getCookies();
             if (connObject != null) {
@@ -48,7 +48,7 @@ public class ApplicationForm extends HttpServlet{
                 /** Declaring the variables */
 			    String presentDepartment, cgpaString, uploadPath, targetPath, firstname, lastname, email, znumber, educationLevel, cvfileName, expCourse="none";
                 float cgpa;
-                int applicantId, courseId, departmentId, expDuration=0;
+                int applicantId, courseId, departmentId, instructorId, expDuration=0;
                 boolean previousExperienceExists;
                 java.sql.Date gradDate;
                 InputStream cvInputStream;
@@ -71,12 +71,7 @@ public class ApplicationForm extends HttpServlet{
                 applicantId = applicantDetails.getInt("id");
                 presentDepartment = req.getParameter("presentDepartment");
                 System.out.println("CGPA read from UI : "+ req.getParameter("cgpa"));
-                if(req.getParameter("cgpa") == null){
-                    System.out.println("Extra cgpa val : " + req.getParameter("extraCgpa"));
-                    cgpaString = req.getParameter("extraCgpa");
-                }else{
-                    cgpaString = req.getParameter("cgpa");
-                }
+                cgpaString = req.getParameter("cgpa");
                 cgpa = Float.parseFloat(cgpaString);
                 educationLevel = req.getParameter("educationLevel");
                 departmentId = Integer.parseInt(req.getParameter("department"));
@@ -85,8 +80,8 @@ public class ApplicationForm extends HttpServlet{
                 gradDate = new java.sql.Date(parsedDate.getTime());
                 cv = req.getPart("cv");
                 cvfileName = cv.getSubmittedFileName();
-                uploadPath = "D:\\work\\apache\\apache-tomcat-9.0.80\\webapps\\ta" + File.separator + "uploads";
-                targetPath = uploadPath + File.separator + znumber + cvfileName.substring(cvfileName.indexOf('.'));
+                uploadPath = "D:\\work\\apache\\apache-tomcat-9.0.80\\webapps\\ta\\uploads";
+                targetPath = uploadPath + "\\" + znumber + cvfileName.substring(cvfileName.indexOf('.'));
                 if("on".equals(req.getParameter("workExperienceBoolean"))){
                     previousExperienceExists = true;
                     expCourse = req.getParameter("expCourse");
@@ -94,8 +89,17 @@ public class ApplicationForm extends HttpServlet{
                 }else{
                     previousExperienceExists = false;
                 }
-                applicationInsertQuery = "INSERT INTO ta_application (ta_applicant_id, firstname, lastname, email, znumber, cgpa, present_department, education_level, graduation_date, previous_experience, exp_course, exp_duration, cv, course_id, department_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+                Statement courseStatement = connObject.createStatement();
+                ResultSet courseResultSet = courseStatement.executeQuery("SELECT * FROM course WHERE id='"+courseId+"'");
+                if(courseResultSet.next()){
+                    instructorId = courseResultSet.getInt("instructor_id");
+                }else{
+                    instructorId = 0;
+                }
+                applicationInsertQuery = "INSERT INTO ta_application (ta_applicant_id, firstname, lastname, "+
+                "email, znumber, cgpa, present_department, education_level, graduation_date, previous_experience, "+
+                "exp_course, exp_duration, cv, course_id, department_id, instructor_id, recommended, status) "+
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 Statement taAppsStatement = connObject.createStatement();
                 ResultSet taAppsResultSet = taAppsStatement.executeQuery("SELECT * FROM ta_application WHERE znumber='"+znumber+"' AND course_id='"+courseId+"'");
                 if(taAppsResultSet.next()){
@@ -105,7 +109,7 @@ public class ApplicationForm extends HttpServlet{
                     /** Printing the above values for reference */
                     System.out.println("cgpa : "+cgpa+", presentDepartment: "+presentDepartment+", educationLevel: "+educationLevel+", gradDate: "+gradDate);
                     System.out.println("previousExperienceExists : "+previousExperienceExists+", expCourse: "+expCourse+", expDuration: "+expDuration);
-                    System.out.println("cvfileName : "+cvfileName);
+                    System.out.println("instructorId : "+instructorId);
 
                     try (InputStream cvFileContent = cv.getInputStream()) {
                         Files.copy(cvFileContent, Paths.get(targetPath), StandardCopyOption.REPLACE_EXISTING);
@@ -130,7 +134,9 @@ public class ApplicationForm extends HttpServlet{
                     applicationPS.setString(13, cvfileName);
                     applicationPS.setInt(14, courseId);
                     applicationPS.setInt(15, departmentId);
-                    applicationPS.setString(16, "Open");
+                    applicationPS.setInt(16, instructorId);
+                    applicationPS.setInt(17, 0);
+                    applicationPS.setString(18, "Open");
 
                     int rowsAffected = applicationPS.executeUpdate();
 
@@ -143,7 +149,6 @@ public class ApplicationForm extends HttpServlet{
             } else {
                 printWriter.print("Not connected to the database!");
             }
-
         }
 	    catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());

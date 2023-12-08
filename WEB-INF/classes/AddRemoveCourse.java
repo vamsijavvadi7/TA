@@ -12,7 +12,7 @@ public class AddRemoveCourse extends HttpServlet{
 	  try 
 	  {
 		  Class.forName("com.mysql.jdbc.Driver");
-		  Connection connObject = DriverManager.getConnection("jdbc:mysql://10.0.0.224:3306/ta", "ta", "root");
+		  Connection connObject = DriverManager.getConnection("jdbc:mysql://127.8.9.0:3306/ta", "ta", "root");
 			PrintWriter printWriter = res.getWriter();
             Cookie[] cookies = req.getCookies();
             if (connObject != null) {
@@ -61,9 +61,16 @@ public class AddRemoveCourse extends HttpServlet{
                             ResultSet generatedKeys = addCoursePS.getGeneratedKeys();
                             if(generatedKeys.next()){
                                 long insertedId = generatedKeys.getLong(1);
-                                printWriter.print(insertedId);
                                 System.out.println("Successfully added new course!");
                                 System.out.println("Inserted ID for course : "+insertedId);
+                                String instructorQuery = "UPDATE instructor SET course_id="+insertedId+", department_id="+departmentId+", course_name='"+courseName+"' WHERE id='"+instructorId+"'";
+                                Statement instructorStatement = connObject.createStatement();
+                                int updatedInstructorRows = instructorStatement.executeUpdate(instructorQuery);
+                                if(updatedInstructorRows>=1){
+                                    printWriter.print(insertedId);
+                                }else{
+                                    printWriter.print("Id="+insertedId+";failed to update instructor table");
+                                }
                             } else {
                                 printWriter.print("No Id");
                             }
@@ -74,15 +81,19 @@ public class AddRemoveCourse extends HttpServlet{
                     } else {
                         System.out.println(req.getParameter("ids"));
                         String ids = req.getParameter("ids");
-                        String query = "DELETE FROM course WHERE id IN ("+ids+")";
+                        String courseQuery = "DELETE FROM course WHERE id IN ("+ids+")";
+                        String instructorQuery = "UPDATE instructor SET course_id='0', department_id='0', course_name='' WHERE course_id IN ("+ids+")";
+                        System.out.println("SQL instructor query : "+ instructorQuery);
                         Statement courseStatement = connObject.createStatement();
-                        int updatedRows = courseStatement.executeUpdate(query);
-                        if(updatedRows>=1){
+                        Statement instructorStatement = connObject.createStatement();
+                        int updatedCourseRows = courseStatement.executeUpdate(courseQuery);
+                        int updatedInstructorRows = instructorStatement.executeUpdate(instructorQuery);
+                        if(updatedCourseRows>=1 && updatedInstructorRows>=1){
                             printWriter.print("success");
                             System.out.println("successfully removed course");
                         }else{
                             printWriter.print("failed");
-                            System.out.println("Failed to remove course");
+                            System.out.println("Failed to remove course, updatedCourseRows:"+updatedCourseRows+" and updatedInstructorRows:"+updatedInstructorRows);
                         }
                     }
                 }

@@ -9,7 +9,7 @@ public class Register extends HttpServlet {
 
         try {
             Class.forName("com.mysql.jdbc.Driver");// postgresql.org.postgresql.Driver
-            Connection conObject = DriverManager.getConnection("jdbc:mysql://10.0.0.224:3306/ta", "ta", "root");// postgresql://localhost:5433/
+            Connection conObject = DriverManager.getConnection("jdbc:mysql://127.8.9.0:3306/ta", "ta", "root");// postgresql://localhost:5433/
             PrintWriter printWriter = res.getWriter();
             ResultSet resultSet = null;
             if (conObject != null) {
@@ -25,11 +25,11 @@ public class Register extends HttpServlet {
                 System.out.println("Captured all details : " + firstname + ", " + lastname + ", " + email + ", "
                         + znumber + ", " + password + ", " + usertype);
                 Statement statement = conObject.createStatement();
-                resultSet = statement.executeQuery("select * from users where usertype='applicant' AND email='" + email
+                resultSet = statement.executeQuery("select * from ta_applicant where email='" + email
                         + "' OR znumber='" + znumber + "';");
                 if (resultSet.next() == false) {
                     System.out.println("User not exists");
-                    int insertedRows = statement.executeUpdate("INSERT INTO users (`firstname`, `lastname`, `znumber`, `email`, `password`, `usertype`) VALUES ('" + firstname + "', '" + lastname + "', '" + znumber + "', '" + email + "', '" + password + "', '" + usertype + "')");
+                    int insertedRows = statement.executeUpdate("INSERT INTO ta_applicant (`firstname`, `lastname`, `znumber`, `email`, `password`) VALUES ('" + firstname + "', '" + lastname + "', '" + znumber + "', '" + email + "', '" + password + "')");
                     System.out.println("User inserted in DB!!");
                     if (insertedRows == 1) {
                         printWriter.print("success");

@@ -11,14 +11,14 @@ public class AdminHome extends HttpServlet{
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException { 
 	    try {
 		    Class.forName("com.mysql.jdbc.Driver");
-		    Connection connObject = DriverManager.getConnection("jdbc:mysql://10.0.0.224:3306/ta", "ta", "root");
+		    Connection connObject = DriverManager.getConnection("jdbc:mysql://127.8.9.0:3306/ta", "ta", "root");
 		    PrintWriter printWriter = res.getWriter();
             Cookie[] cookies = req.getCookies();
             if (connObject != null) {
 			    res.setContentType("text/html");
 			    String username="", usertype="";
     
-                for(int i=0; i < cookies.length; i++) {
+                for(int i=0; cookies!=null && i < cookies.length; i++) {
                       if("TAusername".equals(cookies[i].getName())) {
                           username = cookies[i].getValue();
                       }
@@ -37,6 +37,10 @@ public class AdminHome extends HttpServlet{
                         req.setAttribute("committeeList", getCommitteeList(connObject));
                         req.setAttribute("approvedApplicationsList", getApprovedApplicationsList(connObject));
                         req.setAttribute("departmentList", getDepartmentList(connObject));
+                        req.setAttribute("firstname", userResultSet.getString("firstname"));
+                        req.setAttribute("lastname", userResultSet.getString("lastname"));
+                        req.setAttribute("email", userResultSet.getString("email"));
+                        req.setAttribute("password", userResultSet.getString("password"));
                         req.getRequestDispatcher("/admin.jsp").forward(req, res);
                     } else{
                         req.getRequestDispatcher("/login.jsp").forward(req, res);
@@ -54,7 +58,6 @@ public class AdminHome extends HttpServlet{
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public List<TaApplicationData> getApplicationsList(Connection con) {
@@ -69,9 +72,9 @@ public class AdminHome extends HttpServlet{
         "WHERE application.course_id=course.id AND application.department_id=selectedDepartment.id AND "+
         "application.present_department=presentDepartment.id AND application.instructor_id=instructor.id";
         Statement applicationsStatement=null;
+        ResultSet applicationsResultSet=null;
         Statement feedbackStatement=null;
         ResultSet feedbackResultSet=null;
-        ResultSet applicationsResultSet=null;
         List<TaApplicationData> applicationsList = new ArrayList<TaApplicationData>();
         System.out.println("==== In getApplicationsList Method Start==== ");
         try 
@@ -83,19 +86,22 @@ public class AdminHome extends HttpServlet{
                 TaApplicationData application = new TaApplicationData();
                 int instructorFeedbackId = applicationsResultSet.getInt("instructor_feedback_id");
                 System.out.println("FeedbackId : "+applicationsResultSet.getInt("instructor_feedback_id"));
-                if(applicationsResultSet.getInt("instructor_feedback_id") == 0) {
+                if(instructorFeedbackId == 0) {
                     application.setInstructorFeedbackExists(false);
                 } else {
                     String instructorFeedbackQuery="SELECT instructor_feedback.*, course.course_name FROM instructor_feedback, course WHERE instructor_feedback.id='"+instructorFeedbackId+"' AND instructor_feedback.course_id=course.id";
                     feedbackResultSet = feedbackStatement.executeQuery(instructorFeedbackQuery);
-                    feedbackResultSet.next();
-                    application.setInstructorFeedbackExists(true);
-                    application.setInstructorFeedbackName(feedbackResultSet.getString("instructor_name"));
-                    application.setInstructorFeedbackCourseName(feedbackResultSet.getString("course_name"));
-                    application.setPerformanceRating(feedbackResultSet.getInt("performance_rating"));
-                    application.setTechnicalSkillRating(feedbackResultSet.getInt("technical_skill"));
-                    application.setCommunicationSkillRating(feedbackResultSet.getInt("communication_skill"));
-                    application.setInstructorOverallFeedback(feedbackResultSet.getString("overall_feedback"));
+                    if(feedbackResultSet.next()){
+                        application.setInstructorFeedbackExists(true);
+                        application.setInstructorFeedbackName(feedbackResultSet.getString("instructor_name"));
+                        application.setInstructorFeedbackCourseName(feedbackResultSet.getString("course_name"));
+                        application.setPerformanceRating(feedbackResultSet.getInt("performance_rating"));
+                        application.setTechnicalSkillRating(feedbackResultSet.getInt("technical_skill"));
+                        application.setCommunicationSkillRating(feedbackResultSet.getInt("communication_skill"));
+                        application.setInstructorOverallFeedback(feedbackResultSet.getString("overall_feedback"));
+                    }else{
+                        application.setInstructorFeedbackExists(false);
+                    }
                 }
                 application.setDepartmentName(applicationsResultSet.getString("selected_department_name"));
                 application.setCourseName(applicationsResultSet.getString("course_name"));
@@ -128,8 +134,6 @@ public class AdminHome extends HttpServlet{
 
         String courseDataQuery = "SELECT course.*, instructor.firstname, instructor.lastname, department.department_name "+
         "FROM course, instructor, department WHERE course.department_id=department.id AND course.instructor_id=instructor.id";
-
-        
         Statement courseStatement=null;
         ResultSet courseResultSet=null;
         List<CourseData> courseList = new ArrayList<CourseData>();
@@ -145,13 +149,19 @@ public class AdminHome extends HttpServlet{
                 course.setCourseId(courseResultSet.getInt("id"));
                 course.setStatus(courseResultSet.getBoolean("status"));
                 course.setDepartmentId(courseResultSet.getInt("department_id"));
-                course.setInstructorName(courseResultSet.getString("firstname")+" "+courseResultSet.getString("lastname"));
+                String lastname = courseResultSet.getString("lastname");
+                if(lastname==null)
+                {
+                    lastname = "";
+                }
+                course.setInstructorName(courseResultSet.getString("firstname")+" "+lastname);
                 courseList.add(course);
             }
         }catch (Exception e) {
             e.printStackTrace();    
         }
         System.out.println("==== In getCourseList Method End ==== ");
+        System.out.println("Course list length : "+courseList.size());
         return courseList;
     }
 
@@ -173,7 +183,12 @@ public class AdminHome extends HttpServlet{
                 instructor.setCourseName(instructorResultSet.getString("course_name"));
                 instructor.setId(instructorResultSet.getInt("id"));
                 instructor.setEmail(instructorResultSet.getString("email"));
-                instructor.setInstructorName(instructorResultSet.getString("firstname")+" "+instructorResultSet.getString("lastname"));
+                String lastname = instructorResultSet.getString("lastname");
+                if(lastname==null)
+                {
+                    lastname = "";
+                }
+                instructor.setInstructorName(instructorResultSet.getString("firstname")+" "+lastname);
                 instructorsList.add(instructor);
             }
         }catch (Exception e) {
@@ -186,8 +201,6 @@ public class AdminHome extends HttpServlet{
     public List<CommitteeBean> getCommitteeList(Connection con) {
 
         String committeeDataQuery = "SELECT * FROM ta_committee";
-
-        
         Statement committeeStatement=null;
         ResultSet committeeResultSet=null;
         List<CommitteeBean> committeeList = new ArrayList<CommitteeBean>();
@@ -198,7 +211,11 @@ public class AdminHome extends HttpServlet{
             committeeResultSet = committeeStatement.executeQuery(committeeDataQuery);
             while(committeeResultSet.next()){
                 CommitteeBean committee = new CommitteeBean();
-                committee.setName(committeeResultSet.getString("firstname")+" "+committeeResultSet.getString("lastname"));
+                String lastname = committeeResultSet.getString("lastname");
+                if(lastname==null || lastname.equals("null")){
+                    lastname="";
+                }
+                committee.setName(committeeResultSet.getString("firstname")+" "+lastname);
                 committee.setId(committeeResultSet.getInt("id"));
                 committee.setEmail(committeeResultSet.getString("email"));
                 committeeList.add(committee);
