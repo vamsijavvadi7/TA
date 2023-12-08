@@ -9,10 +9,10 @@ public class Register extends HttpServlet {
 
         try {
             Class.forName("com.mysql.jdbc.Driver");// postgresql.org.postgresql.Driver
-            Connection conObject = DriverManager.getConnection("jdbc:mysql://127.8.9.0:3306/ta", "ta", "root");// postgresql://localhost:5433/
+             Connection connObject= DriverManager.getConnection("jdbc:mysql://cxmgkzhk95kfgbq4.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/f82xxi2eeg1ve5sb", "jhup7v5131i5xtac", "fr66ky1m42aaumtj");// postgresql://localhost:5433/
             PrintWriter printWriter = res.getWriter();
             ResultSet resultSet = null;
-            if (conObject != null) {
+            if (connObject != null) {
                 res.setContentType("text/html");
                 System.out.println("Connected to the database!");
                 String firstname, lastname, email, znumber, password, usertype;
@@ -24,7 +24,7 @@ public class Register extends HttpServlet {
                 usertype = "applicant";
                 System.out.println("Captured all details : " + firstname + ", " + lastname + ", " + email + ", "
                         + znumber + ", " + password + ", " + usertype);
-                Statement statement = conObject.createStatement();
+                Statement statement = connObject.createStatement();
                 resultSet = statement.executeQuery("select * from ta_applicant where email='" + email
                         + "' OR znumber='" + znumber + "';");
                 if (resultSet.next() == false) {

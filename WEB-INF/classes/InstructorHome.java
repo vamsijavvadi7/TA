@@ -10,7 +10,8 @@ public class InstructorHome extends HttpServlet{
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException { 
 	    try {
 		    Class.forName("com.mysql.jdbc.Driver");
-		    Connection connObject = DriverManager.getConnection("jdbc:mysql://127.8.9.0:3306/ta", "ta", "root");
+              Connection connObject= DriverManager.getConnection("jdbc:mysql://cxmgkzhk95kfgbq4.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/f82xxi2eeg1ve5sb", "jhup7v5131i5xtac", "fr66ky1m42aaumtj");
+		  
 		    PrintWriter printWriter = res.getWriter();
             Cookie[] cookies = req.getCookies();
             if (connObject != null) {
@@ -35,6 +36,7 @@ public class InstructorHome extends HttpServlet{
                         req.setAttribute("email", userResultSet.getString("email"));
                         req.setAttribute("password", userResultSet.getString("password"));
                          req.setAttribute("taList", getTasList(connObject,username));
+                        //  req.setAttribute("hello",getHello());
                          String lastname = userResultSet.getString("lastname");
                          if(lastname.equals("") || lastname==null){
                             lastname = "";
@@ -118,6 +120,34 @@ public class InstructorHome extends HttpServlet{
         System.out.println("==== In gettaFeedbackList Method End ==== ");
         return taList;
     }
+
+    // public String getHello(){
+ 
+    //      try {
+    //                   Connection con= DriverManager.getConnection("jdbc:mysql://cxmgkzhk95kfgbq4.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/f82xxi2eeg1ve5sb", "jhup7v5131i5xtac", "fr66ky1m42aaumtj");
+
+    //         Statement userStatement = con.createStatement();
+    //         ResultSet userResultSet = userStatement.executeQuery("SELECT name FROM hello");
+            
+    //         if (userResultSet.next()) {
+    //             String name = userResultSet.getString("name");
+    //             System.out.println(name + " blahblah");
+    //             return name;
+    //         } else {
+    //             // Handle the case where no results are found
+    //             System.out.println("No results found");
+    //             return null;
+    //         }
+    //     } catch (SQLException e) {
+    //         // Handle the SQLException
+    //         e.printStackTrace(); // Or handle it accordingly
+    //         return null;
+    //     }
+    
+    // }
+
+
+
     public List<TaData> getTasList(Connection con,String username) 
     {
         String taDataQuery = "SELECT tas.id as ta_id, tas.name as ta_name, " +
